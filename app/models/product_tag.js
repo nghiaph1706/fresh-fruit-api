@@ -1,0 +1,33 @@
+/* jshint indent: 2 */
+
+export default function (sequelize, DataTypes) {
+  return sequelize.define('product_tag', {
+    id: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      primaryKey: true,
+      comment: 'null',
+      autoIncrement: true
+    },
+    product_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      comment: 'null',
+      references: {
+        model: 'products',
+        key: 'id'
+      }
+    },
+    tag_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      comment: 'null',
+      references: {
+        model: 'tags',
+        key: 'id'
+      }
+    }
+  }, {
+    tableName: 'product_tag'
+  })
+};
