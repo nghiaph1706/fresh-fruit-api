@@ -1,32 +1,29 @@
 // controllers/UserController.js
-const getAllUsers = (req, res) => {
-    // Implement logic to get all users
-    res.json({ message: 'Get all users' });
-};
+import { models } from '../models/index.js'
+import bcrypt from 'bcrypt'
+import * as UserRepository from '../repositories/UserRepository.js'
 
-const getUserById = (req, res) => {
-    // Implement logic to get a user by ID
-    const userId = req.params.id;
-    res.json({ message: `Get user with ID ${userId}` });
-};
+const { User } = models
 
-const createUser = (req, res) => {
-    // Implement logic to create a new user
-    const userData = req.body;
-    res.json({ message: 'Create user', data: userData });
-};
+const token = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        email: req.body.email,
+        is_active: true
+      }
+    })
+    if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
+      return res.json({ token: null, permissions: [] })
+    }
+    const token = UserRepository.createToken(user)
+    const permissions = UserRepository.getPermissionNames(user)
 
-const updateUser = (req, res) => {
-    // Implement logic to update a user by ID
-    const userId = req.params.id;
-    const updatedUserData = req.body;
-    res.json({ message: `Update user with ID ${userId}`, data: updatedUserData });
-};
+    return res.json({ token, permissions })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal Server Error' })
+  }
+}
 
-const deleteUser = (req, res) => {
-    // Implement logic to delete a user by ID
-    const userId = req.params.id;
-    res.json({ message: `Delete user with ID ${userId}` });
-};
-
-export { getAllUsers, getUserById, createUser, updateUser, deleteUser };
+export { token }

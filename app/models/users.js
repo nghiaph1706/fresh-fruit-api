@@ -7,56 +7,56 @@ export default function (sequelize, DataTypes) {
         type: DataTypes.BIGINT,
         allowNull: false,
         primaryKey: true,
-        autoIncrement: true,
+        autoIncrement: true
       },
       name: {
         type: DataTypes.STRING(191),
-        allowNull: false,
+        allowNull: false
       },
       email: {
         type: DataTypes.STRING(191),
         allowNull: false,
-        unique: true,
+        unique: true
       },
       email_verified_at: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: true
       },
       password: {
         type: DataTypes.STRING(191),
-        allowNull: true,
+        allowNull: true
       },
       remember_token: {
         type: DataTypes.STRING(100),
-        allowNull: true,
+        allowNull: true
       },
       created_at: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: true
       },
       updated_at: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: true
       },
       is_active: {
         type: DataTypes.INTEGER(1),
         allowNull: false,
-        defaultValue: 1,
+        defaultValue: 1
       },
       shop_id: {
         type: DataTypes.BIGINT,
         allowNull: true,
         references: {
           model: 'shops',
-          key: 'id',
-        },
-      },
+          key: 'id'
+        }
+      }
     },
     {
       tableName: 'users',
-      timestamps: false, // Set to true if you want Sequelize to manage createdAt and updatedAt columns
+      timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt columns
     }
-  );
+  )
 
-  return User;
+  return User
 }
