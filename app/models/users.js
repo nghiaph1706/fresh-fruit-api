@@ -1,66 +1,62 @@
-/* jshint indent: 2 */
-
+// models/users.js
 export default function (sequelize, DataTypes) {
-  return sequelize.define('users', {
-    id: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      primaryKey: true,
-      comment: 'null',
-      autoIncrement: true
-    },
-    name: {
-      type: DataTypes.STRING(191),
-      allowNull: false,
-      comment: 'null'
-    },
-    email: {
-      type: DataTypes.STRING(191),
-      allowNull: false,
-      comment: 'null',
-      unique: true
-    },
-    email_verified_at: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      comment: 'null'
-    },
-    password: {
-      type: DataTypes.STRING(191),
-      allowNull: true,
-      comment: 'null'
-    },
-    remember_token: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
-      comment: 'null'
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      comment: 'null'
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      comment: 'null'
-    },
-    is_active: {
-      type: DataTypes.INTEGER(1),
-      allowNull: false,
-      defaultValue: '1',
-      comment: 'null'
-    },
-    shop_id: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      comment: 'null',
-      references: {
-        model: 'shops',
-        key: 'id'
+  const User = sequelize.define(
+    'User',
+    {
+      id: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      name: {
+        type: DataTypes.STRING(191),
+        allowNull: false
+      },
+      email: {
+        type: DataTypes.STRING(191),
+        allowNull: false,
+        unique: true
+      },
+      email_verified_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      password: {
+        type: DataTypes.STRING(191),
+        allowNull: true
+      },
+      remember_token: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      is_active: {
+        type: DataTypes.INTEGER(1),
+        allowNull: false,
+        defaultValue: 1
+      },
+      shop_id: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+        references: {
+          model: 'shops',
+          key: 'id'
+        }
       }
+    },
+    {
+      tableName: 'users',
+      timestamps: false // Set to true if you want Sequelize to manage createdAt and updatedAt columns
     }
-  }, {
-    tableName: 'users'
-  })
-};
+  )
+
+  return User
+}

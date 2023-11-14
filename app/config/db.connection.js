@@ -1,6 +1,7 @@
+// connection.js
 import dotenv from 'dotenv'
-
 import { Sequelize } from 'sequelize'
+
 dotenv.config()
 
 const sequelize = new Sequelize(
@@ -22,4 +23,4 @@ const connection = async () => {
   }
 }
 
-connection()
+export { sequelize, connection }
