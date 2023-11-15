@@ -2,8 +2,8 @@
 import bcrypt from "bcrypt";
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
-import * as UserRepository from "../repositories/UserRepository.js";
-import ContactAdminEmail from "../services/MailService.js";
+import MailService from "../services/MailService.js";
+import * as AuthService from "../services/AuthService.js"
 
 const { User } = models;
 
@@ -18,8 +18,8 @@ export const token = async (req, res) => {
     if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
       return res.json({ token: null, permissions: [] });
     }
-    const token = UserRepository.createToken(user);
-    const permissions = UserRepository.getPermissionNames(user);
+    const token = await AuthService.createToken(user)
+    const permissions = await AuthService.getPermissionNames(user)
 
     return res.json({ token, permissions });
   } catch (error) {
@@ -31,8 +31,8 @@ export const token = async (req, res) => {
 export const contactAdmin = async (req, res) => {
   try {
     const details = req.body;
-    const contactAdminEmail = new ContactAdminEmail(details);
-    contactAdminEmail.send();
+    const mailService = new MailService(details);
+    mailService.send();
     return res.json({
       message: constants.EMAIL_SENT_SUCCESSFUL,
       success: true,

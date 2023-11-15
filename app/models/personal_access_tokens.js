@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 export default function (sequelize, DataTypes) {
-  return sequelize.define('personal_access_tokens', {
+  const PersonalAccessTokens = sequelize.define('personal_access_tokens', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -40,17 +40,17 @@ export default function (sequelize, DataTypes) {
       allowNull: true,
       comment: 'null'
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      comment: 'null'
+    createdAt: {
+        field: 'created_at',
+        type: DataTypes.DATE,
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      comment: 'null'
-    }
+    updatedAt: {
+        field: 'updated_at',
+        type: DataTypes.DATE,
+    },
   }, {
     tableName: 'personal_access_tokens'
   })
+
+  return PersonalAccessTokens
 };
