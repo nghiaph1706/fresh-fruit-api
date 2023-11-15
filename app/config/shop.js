@@ -47,7 +47,7 @@ const config = {
   },
 };
 
-export default function getConfigValue(key) {
+export default function getShopConfig(key) {
   const keys = key.split(".");
   let value = { ...config };
   keys.forEach((k) => {

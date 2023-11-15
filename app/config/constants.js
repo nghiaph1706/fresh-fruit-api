@@ -1,21 +1,21 @@
 // constants.js
-import getConfigValue from "./shop";
+import getShopConfig from "./shop.js";
 
 const APP_NOTICE_DOMAIN =
   process.env.APP_NOTICE_DOMAIN ||
-  getConfigValue("app_notice_domain") ||
+  getShopConfig("app_notice_domain") ||
   "MARVEL_";
 const DEFAULT_LANGUAGE =
-  process.env.DEFAULT_LANGUAGE || getConfigValue("default_language") || "en";
+  process.env.DEFAULT_LANGUAGE || getShopConfig("default_language") || "en";
 const TRANSLATION_ENABLED =
   process.env.TRANSLATION_ENABLED === "true" ||
-  getConfigValue("translation_enabled") ||
+  getShopConfig("translation_enabled") ||
   false;
 const DEFAULT_CURRENCY =
-  process.env.DEFAULT_CURRENCY || getConfigValue("default_currency") || "USD";
+  process.env.DEFAULT_CURRENCY || getShopConfig("default_currency") || "USD";
 const ACTIVE_PAYMENT_GATEWAY =
   process.env.ACTIVE_PAYMENT_GATEWAY ||
-  getConfigValue("active_payment_gateway") ||
+  getShopConfig("active_payment_gateway") ||
   "stripe";
 
 const NOT_FOUND = APP_NOTICE_DOMAIN + "ERROR.NOT_FOUND";

@@ -1,29 +1,39 @@
+import dotenv from "dotenv";
 import nodemailer from "nodemailer";
-import constants from "../constants.js";
+import getShopConfig from "../config/shop.js";
+dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  // Thông tin cấu hình gửi email (cấu hình SMTP hoặc một dịch vụ gửi email khác)
-  // Ví dụ sử dụng Gmail:
-  service: "gmail",
-  auth: {
-    user: "your-email@gmail.com",
-    pass: "your-password",
-  },
-});
-
-export const sendMail = async ({ to, subject, text }) => {
-  const mailOptions = {
-    from: "your-email@gmail.com",
-    to,
-    subject,
-    text,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log("Email sent:", mailOptions);
-  } catch (error) {
-    console.error("Error sending email:", error);
-    throw error;
+export default class ContactAdmin {
+  constructor(details) {
+    this.details = details;
   }
-};
+
+  async send() {
+    var transport = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.mailtrap.io",
+      port: process.env.SMTP_PORT || 2525,
+      auth: {
+        user: process.env.SMTP_USER || "your-user",
+        pass: process.env.SMTP_PASSWORD || "your-password",
+      },
+    });
+
+    const mailOptions = {
+      from: this.details.email,
+      to: getShopConfig("admin_email"),
+      subject: this.details.subject,
+      html: `
+              <p><strong>Email:</strong> ${this.details.email}</p>
+              <p>${this.details.description}</p>
+              <p>Thanks,<br>${this.details.name}</p>
+          `,
+    };
+
+    try {
+      const info = await transport.sendMail(mailOptions);
+      console.log("Email sent: " + info.response);
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
+  }
+}

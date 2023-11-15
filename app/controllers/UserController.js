@@ -1,9 +1,9 @@
 // controllers/UserController.js
-import constants from "..config/constants.js";
 import bcrypt from "bcrypt";
+import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import * as UserRepository from "../repositories/UserRepository.js";
-import * as MailService from "../services/MailService.js";
+import ContactAdminEmail from "../services/MailService.js";
 
 const { User } = models;
 
@@ -31,11 +31,8 @@ export const token = async (req, res) => {
 export const contactAdmin = async (req, res) => {
   try {
     const details = req.body;
-    await MailService.sendMail({
-      to: constants.APP_NOTICE_DOMAIN,
-      subject: details.subject,
-      text: `Name: ${details.name}\nEmail: ${details.email}\nDescription: ${details.description}`,
-    });
+    const contactAdminEmail = new ContactAdminEmail(details);
+    contactAdminEmail.send();
     return res.json({
       message: constants.EMAIL_SENT_SUCCESSFUL,
       success: true,
