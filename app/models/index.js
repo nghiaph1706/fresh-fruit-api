@@ -1,6 +1,9 @@
 // models/index.js
 import { Sequelize } from "sequelize";
 import UserModel from "./users.js";
+import PermissionsModel from './permissions.js'
+import ModelHasPermissionsModel from './model_has_permissions.js'
+import PersonalAccessTokensModel from "./personal_access_tokens.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -17,6 +20,9 @@ const sequelize = new Sequelize(
 
 const models = {
   User: UserModel(sequelize, Sequelize.DataTypes),
+  Permissions: PermissionsModel(sequelize, Sequelize.DataTypes),
+  ModelHasPermissions: ModelHasPermissionsModel(sequelize, Sequelize.DataTypes),
+  PersonalAccessTokens: PersonalAccessTokensModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 

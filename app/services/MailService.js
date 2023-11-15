@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import getShopConfig from "../config/shop.js";
 dotenv.config();
 
-export default class ContactAdmin {
+export default class MailService {
   constructor(details) {
     this.details = details;
   }
