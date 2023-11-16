@@ -1,6 +1,7 @@
 // models/index.js
 import { Sequelize } from "sequelize";
 import AuthorsModel from "./authors.js";
+import ManufacturersModel from "./manufacturers.js";
 import ModelHasPermissionsModel from "./model_has_permissions.js";
 import PermissionsModel from "./permissions.js";
 import PersonalAccessTokensModel from "./personal_access_tokens.js";
@@ -30,6 +31,7 @@ const models = {
   ),
   Author: AuthorsModel(sequelize, Sequelize.DataTypes),
   Product: ProductsModel(sequelize, Sequelize.DataTypes),
+  Manufacturer: ManufacturersModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 
