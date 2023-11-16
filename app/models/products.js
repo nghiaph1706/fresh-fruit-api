@@ -212,6 +212,9 @@ export default function (sequelize, DataTypes) {
 
   Product.associate = (models) => {
     Product.belongsTo(models.Author, { foreignKey: "author_id" });
+    Product.belongsTo(models.Manufacturer, { foreignKey: "manufacturer_id" });
+    Product.belongsTo(models.Type, { foreignKey: "type_id" });
+    Product.belongsTo(models.Shop, { foreignKey: "shop_id" });
   };
 
   return Product;
