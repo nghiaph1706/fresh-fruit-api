@@ -3,9 +3,12 @@ import { Sequelize } from "sequelize";
 import AuthorsModel from "./authors.js";
 import ManufacturersModel from "./manufacturers.js";
 import ModelHasPermissionsModel from "./model_has_permissions.js";
+import OrdersModel from "./orders.js";
 import PermissionsModel from "./permissions.js";
 import PersonalAccessTokensModel from "./personal_access_tokens.js";
 import ProductsModel from "./products.js";
+import ShopsModel from "./shops.js";
+import TypesModel from "./types.js";
 import UserModel from "./users.js";
 
 const sequelize = new Sequelize(
@@ -32,6 +35,9 @@ const models = {
   Author: AuthorsModel(sequelize, Sequelize.DataTypes),
   Product: ProductsModel(sequelize, Sequelize.DataTypes),
   Manufacturer: ManufacturersModel(sequelize, Sequelize.DataTypes),
+  Order: OrdersModel(sequelize, Sequelize.DataTypes),
+  Type: TypesModel(sequelize, Sequelize.DataTypes),
+  Shop: ShopsModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 
