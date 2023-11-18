@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 export default function (sequelize, DataTypes) {
-  const Permissions = sequelize.define(
+  const Permission = sequelize.define(
     "permissions",
     {
       id: {
@@ -34,8 +34,15 @@ export default function (sequelize, DataTypes) {
     },
     {
       tableName: "permissions",
+      timestamps: true, 
+      createdAt: 'created_at', 
+      updatedAt: 'updated_at' 
     }
   );
 
-  return Permissions;
+  Permission.associate = (models) => {
+    Permission.belongsToMany(models.User, { through: models.UserHasPermission, sourceKey: 'id' });
+  };
+
+  return Permission;
 }
