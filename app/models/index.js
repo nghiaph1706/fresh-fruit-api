@@ -26,9 +26,9 @@ const sequelize = new Sequelize(
 
 const models = {
   User: UserModel(sequelize, Sequelize.DataTypes),
-  Permissions: PermissionsModel(sequelize, Sequelize.DataTypes),
-  ModelHasPermissions: ModelHasPermissionsModel(sequelize, Sequelize.DataTypes),
-  PersonalAccessTokens: PersonalAccessTokensModel(
+  Permission: PermissionsModel(sequelize, Sequelize.DataTypes),
+  UserHasPermission: ModelHasPermissionsModel(sequelize, Sequelize.DataTypes),
+  PersonalAccessToken: PersonalAccessTokensModel(
     sequelize,
     Sequelize.DataTypes
   ),

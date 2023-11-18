@@ -1,26 +1,27 @@
 /* jshint indent: 2 */
 
 export default function (sequelize, DataTypes) {
-  const ModelHasPermissions = sequelize.define(
-    "model_has_permissions",
+  const UserHasPermission = sequelize.define(
+    "model_has_permissions", // TODO rename to user_has_permissions
     {
-      permission_id: {
+      permissionId: {
+        field: "permission_id",
         type: DataTypes.BIGINT,
         allowNull: false,
         primaryKey: true,
         comment: "null",
         references: {
-          model: "permissions",
+          model: "permission",
           key: "id",
         },
       },
-      model_type: {
+      model_type: { // TODO remove
         type: DataTypes.STRING(191),
-        allowNull: false,
-        primaryKey: true,
+        allowNull: true,
         comment: "null",
       },
-      model_id: {
+      UserId: {
+        field: "model_id",
         type: DataTypes.BIGINT,
         allowNull: false,
         primaryKey: true,
@@ -33,5 +34,5 @@ export default function (sequelize, DataTypes) {
     }
   );
 
-  return ModelHasPermissions
+  return UserHasPermission
 }

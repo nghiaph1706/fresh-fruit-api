@@ -1,27 +1,27 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { models } from "../models/index.js";
+import permissions from "../models/permissions.js";
 
 dotenv.config();
-const { Permissions, ModelHasPermissions, PersonalAccessTokens } = models;
+const { Permission, UserHasPermission, PersonalAccessToken, User } = models;
 
 export const createToken = async (user) => {
   const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
     expiresIn: process.env.TOKEN_EXPIRED,
   });
 
-  const personalAccessTokens = await PersonalAccessTokens.findOne({
+  const personalAccessTokens = await PersonalAccessToken.findOne({
     where: {
       tokenable_id: user.id,
       name: "auth_token",
+      tokenable_type: "User",
     },
   });
 
-  console.log(personalAccessTokens.id);
-
   if (!personalAccessTokens) {
-    await PersonalAccessTokens.create({
-      tokenable_type: "MarvelDatabaseModelsUser",
+    await PersonalAccessToken.create({
+      tokenable_type: "User",
       tokenable_id: user.id,
       name: "auth_token",
       token: token,
@@ -30,7 +30,7 @@ export const createToken = async (user) => {
     });
     return token;
   } else {
-    await PersonalAccessTokens.update(
+    await PersonalAccessToken.update(
       { last_used_at: Date.now() },
       {
         where: {
@@ -44,24 +44,20 @@ export const createToken = async (user) => {
   }
 };
 
-export const getPermissionNames = async (user) => {
-  const hasPermissions = await ModelHasPermissions.findAll({
-    attributes: ["permission_id"],
-    where: {
-      model_id: user.id,
-    },
-    raw: true,
-  }).then((permissions) =>
-    permissions.map((permission) => permission.permission_id)
-  );
+export const getPermissionNames = async (hasPermissions) => {
 
-  const permissionNames = await Permissions.findAll({
-    attributes: ["name"],
-    where: {
-      id: hasPermissions,
-    },
-    raw: true,
-  }).then((permissions) => permissions.map((permission) => permission.name));
+  const permissionNames = hasPermissions.map((permission) => permission.name);
 
   return permissionNames;
+};
+
+export const givePermissionTo = async (user, permissionNames) => {
+  const permissions = await Permission.findAll({
+    where: {
+      name: permissionNames,
+    },
+  })
+
+  await user.setPermissions(permissions);
+  
 };
