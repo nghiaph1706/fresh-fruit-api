@@ -164,3 +164,28 @@ export const verifyForgetPasswordToken = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const resetPassword = async (req, res) => {
+  try {
+    const user = await User.update(
+      { password: await bcrypt.hash(req.body.password, 10) },
+      {
+        where: {
+          email: req.body.email,
+        },
+      }
+    );
+    if (user == 0) {
+      return res.json({ message: constants.NOT_FOUND, success: false });
+    }
+    await PasswordReset.destroy({
+      where: {
+        email: req.body.email,
+      },
+    });
+    return res.json({ message: constants.PASSWORD_RESET_SUCCESSFUL, success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
