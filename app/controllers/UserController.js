@@ -82,3 +82,18 @@ export const register = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const logout = async (req, res) => {
+  try {
+    const authorizationHeader = req.headers["authorization"];
+    if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
+      const token = authorizationHeader.substring(7);
+      return res.send(await AuthService.destroyAccessToken(token));
+    } else {
+      throw new Error(constants.NOT_AUTHORIZED);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
