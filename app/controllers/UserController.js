@@ -6,7 +6,7 @@ import MailService from "../services/MailService.js";
 import * as AuthService from "../services/AuthService.js";
 import PermissionEnum from "../config/enum/Permission.js";
 
-const { User } = models;
+const { User, PasswordReset } = models;
 
 export const token = async (req, res) => {
   try {
@@ -35,8 +35,8 @@ export const token = async (req, res) => {
 export const contactAdmin = async (req, res) => {
   try {
     const details = req.body;
-    const mailService = new MailService(details);
-    mailService.send();
+    const mailService = new MailService();
+    await mailService.sendContactAdmin(details);
     return res.json({
       message: constants.EMAIL_SENT_SUCCESSFUL,
       success: true,
@@ -91,6 +91,45 @@ export const logout = async (req, res) => {
       return res.send(await AuthService.destroyAccessToken(token));
     } else {
       throw new Error(constants.NOT_AUTHORIZED);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const forgetPassword = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        email: req.body.email,
+        is_active: true,
+      },
+    });
+    if (!user) {
+      return res.json({ message: constants.NOT_FOUND, success: false });
+    }
+
+    const tokenData = await PasswordReset.findOrCreate({
+      where: {
+        email: req.body.email,
+      },
+      defaults: {
+        email: req.body.email,
+        token: (Math.random() + 1).toString(36).substring(7).toUpperCase(),
+      },
+    });
+
+    if (new MailService().sendResetPassword(tokenData[0])) {
+      return res.json({
+        message: constants.CHECK_INBOX_FOR_PASSWORD_RESET_EMAIL,
+        success: true,
+      });
+    } else {
+      return res.json({
+        message: constants.SOMETHING_WENT_WRONG,
+        success: false,
+      });
     }
   } catch (error) {
     console.error(error);
