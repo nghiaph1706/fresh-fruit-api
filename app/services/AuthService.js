@@ -45,7 +45,6 @@ export const createToken = async (user) => {
 };
 
 export const getPermissionNames = async (hasPermissions) => {
-
   const permissionNames = hasPermissions.map((permission) => permission.name);
 
   return permissionNames;
@@ -56,8 +55,16 @@ export const givePermissionTo = async (user, permissionNames) => {
     where: {
       name: permissionNames,
     },
-  })
+  });
 
   await user.setPermissions(permissions);
-  
+};
+
+export const destroyAccessToken = async (token) => {
+  return await PersonalAccessToken.destroy({
+    where: {
+      name: "auth_token",
+      token: token,
+    },
+  }) > 0 ? true : false;
 };
