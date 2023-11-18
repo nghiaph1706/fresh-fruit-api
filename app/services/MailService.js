@@ -36,7 +36,6 @@ export default class MailService {
   }
 
   async sendResetPassword(details) {
-    console.log(details);
     const mailOptions = {
       from: getShopConfig("admin_email"),
       to: details.email,
@@ -59,11 +58,10 @@ export default class MailService {
   }
 
   async sendWelcome(details) {
-    console.log(details);
     const mailOptions = {
       from: getShopConfig("admin_email"),
       to: details.email,
-      subject: "Reset Your Password",
+      subject: `Welcome to ${process.env.APP_NAME || "APP_NAME"}`,
       html: `
         <p>Hello,</p>
         <p>Welcome ${process.env.APP_NAME || "APP_NAME"}.</p>
@@ -75,7 +73,28 @@ export default class MailService {
       const info = await this.transport.sendMail(mailOptions);
       return true;
     } catch (error) {
-      console.error("Error sending Reset Password email:", error);
+      console.error("Error sending email:", error);
+      return false;
+    }
+  }
+
+  async sendSubscribeToNewsletter(details) {
+    const mailOptions = {
+      from: getShopConfig("admin_email"),
+      to: details.email,
+      subject: `Welcome to ${process.env.APP_NAME || "APP_NAME"}`,
+      html: `
+        <p>Hello,</p>
+        <p>Welcome ${process.env.APP_NAME || "APP_NAME"}.</p>
+        <p>Thank you,<br>${process.env.APP_NAME || "APP_NAME"}</p>
+      `,
+    };
+
+    try {
+      const info = await this.transport.sendMail(mailOptions);
+      return true;
+    } catch (error) {
+      console.error("Error sending email:", error);
       return false;
     }
   }

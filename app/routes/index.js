@@ -15,6 +15,7 @@ router.post("/forget-password", UserController.forgetPassword);
 router.post("/verify-forget-password-token", UserController.verifyForgetPasswordToken);
 router.post("/reset-password", UserController.resetPassword);
 router.post("/contact-us", UserController.contactAdmin);
+router.post("/subscribe-to-newsletter", UserController.subscribeToNewsletter);
 router.get("/top-authors", AuthorController.topAuthor);
 router.get("/top-manufacturers", ManufacturerController.topManufacturer);
 router.get("/popular-products", ProductController.popularProducts);

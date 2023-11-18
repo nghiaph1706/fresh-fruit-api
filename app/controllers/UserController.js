@@ -32,21 +32,6 @@ export const token = async (req, res) => {
   }
 };
 
-export const contactAdmin = async (req, res) => {
-  try {
-    const details = req.body;
-    const mailService = new MailService();
-    await mailService.sendContactAdmin(details);
-    return res.json({
-      message: constants.EMAIL_SENT_SUCCESSFUL,
-      success: true,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
 export const register = async (req, res) => {
   try {
     const notAllowedPermissions = [PermissionEnum.SUPER_ADMIN];
@@ -184,6 +169,33 @@ export const resetPassword = async (req, res) => {
       },
     });
     return res.json({ message: constants.PASSWORD_RESET_SUCCESSFUL, success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const contactAdmin = async (req, res) => {
+  try {
+    const details = req.body;
+    const mailService = new MailService();
+    await mailService.sendContactAdmin(details);
+    return res.json({
+      message: constants.EMAIL_SENT_SUCCESSFUL,
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const subscribeToNewsletter = async (req, res) => {
+  try {
+    const details = req.body;
+    const mailService = new MailService();
+    await mailService.sendSubscribeToNewsletter(details);
+    return res.send(true);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
