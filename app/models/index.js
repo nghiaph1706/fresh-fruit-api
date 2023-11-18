@@ -10,6 +10,7 @@ import ProductsModel from "./products.js";
 import ShopsModel from "./shops.js";
 import TypesModel from "./types.js";
 import UserModel from "./users.js";
+import PasswordResetModel from "./password_resets.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -38,6 +39,7 @@ const models = {
   Order: OrdersModel(sequelize, Sequelize.DataTypes),
   Type: TypesModel(sequelize, Sequelize.DataTypes),
   Shop: ShopsModel(sequelize, Sequelize.DataTypes),
+  PasswordReset: PasswordResetModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 

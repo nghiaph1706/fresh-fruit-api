@@ -11,6 +11,7 @@ const router = express.Router();
 router.post("/token", UserController.token);
 router.post("/register", UserController.register);
 router.post("/logout", UserController.logout);
+router.post("/forget-password", UserController.forgetPassword);
 router.post("/contact-us", UserController.contactAdmin);
 router.get("/top-authors", AuthorController.topAuthor);
 router.get("/top-manufacturers", ManufacturerController.topManufacturer);

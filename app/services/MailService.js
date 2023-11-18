@@ -4,12 +4,8 @@ import getShopConfig from "../config/shop.js";
 dotenv.config();
 
 export default class MailService {
-  constructor(details) {
-    this.details = details;
-  }
-
-  async send() {
-    var transport = nodemailer.createTransport({
+  constructor() {
+    this.transport = nodemailer.createTransport({
       host: process.env.SMTP_HOST || "smtp.mailtrap.io",
       port: process.env.SMTP_PORT || 2525,
       auth: {
@@ -17,23 +13,48 @@ export default class MailService {
         pass: process.env.SMTP_PASSWORD || "your-password",
       },
     });
+  }
 
+  async sendContactAdmin(details) {
     const mailOptions = {
-      from: this.details.email,
+      from: details.email,
       to: getShopConfig("admin_email"),
-      subject: this.details.subject,
+      subject: details.subject,
       html: `
-              <p><strong>Email:</strong> ${this.details.email}</p>
-              <p>${this.details.description}</p>
-              <p>Thanks,<br>${this.details.name}</p>
-          `,
+        <p><strong>Email:</strong> ${details.email}</p>
+        <p>${details.description}</p>
+        <p>Thanks,<br>${details.name}</p>
+      `,
     };
 
     try {
-      const info = await transport.sendMail(mailOptions);
-      console.log("Email sent: " + info.response);
+      const info = await this.transport.sendMail(mailOptions);
+      console.log("Contact Us Email sent: " + info.response);
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error("Error sending Contact Us email:", error);
+    }
+  }
+
+  async sendResetPassword(details) {
+    console.log(details);
+    const mailOptions = {
+      from: getShopConfig("admin_email"),
+      to: details.email,
+      subject: "Reset Your Password",
+      html: `
+        <p>Hello,</p>
+        <p>Please copy the below token to reset your password.</p>
+        <p>--- ${details.token} ---</p>
+        <p>Thank you,<br>${process.env.APP_NAME || "APP_NAME"}</p>
+      `,
+    };
+
+    try {
+      const info = await this.transport.sendMail(mailOptions);
+      return true;
+    } catch (error) {
+      console.error("Error sending Reset Password email:", error);
+      return false;
     }
   }
 }
