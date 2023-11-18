@@ -75,7 +75,7 @@ export const register = async (req, res) => {
     const permissionNames = await AuthService.getPermissionNames(
       await user.getPermissions()
     );
-
+    await new MailService().sendResetPassword(user);
     return res.json({ token, permissionNames });
   } catch (error) {
     console.error(error);
@@ -131,6 +131,34 @@ export const forgetPassword = async (req, res) => {
         success: false,
       });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const verifyForgetPasswordToken = async (req, res) => {
+  try {
+    const tokenData = await PasswordReset.findOne({
+      where: {
+        token: req.body.token,
+      },
+    });
+    if (!tokenData) {
+      return res.json({
+        message: constants.INVALID_TOKEN,
+        success: false,
+      });
+    }
+    const user = await User.findOne({
+      where: {
+        email: tokenData.email,
+      },
+    });
+    if (!user) {
+      return res.json({ message: constants.NOT_FOUND, success: false });
+    }
+    return res.json({ message: constants.TOKEN_IS_VALID, success: true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
