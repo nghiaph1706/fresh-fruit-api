@@ -66,6 +66,14 @@ export const popularProducts = async (req, res) => {
     // Execute the query
     const products = await Product.findAll(baseQuery);
 
+    // TODO recheck base query, example below
+    // const prod = await Product.findOne({
+    //   where: {
+    //     id: 102
+    //   }
+    // })
+    // console.log(await prod.getOrders());
+
     return res.json({ products });
   } catch (error) {
     console.error(error);
