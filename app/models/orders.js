@@ -175,15 +175,18 @@ export default function (sequelize, DataTypes) {
     },
     {
       tableName: "orders",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 
-  // Order.associate = function (models) {
-  //   Order.belongsTo(models.User, {
-  //     foreignKey: "customer_id",
-  //     as: "customer",
-  //   });
-  // };
+  Order.associate = function (models) {
+    Order.belongsToMany(models.Product, {
+      through: models.OrderProduct,
+      sourceKey: "id",
+    });
+  };
 
   return Order;
 }

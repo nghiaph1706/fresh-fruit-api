@@ -11,7 +11,8 @@ export default function (sequelize, DataTypes) {
         comment: "null",
         autoIncrement: true,
       },
-      order_id: {
+      orderId: {
+        field: "order_id",
         type: DataTypes.BIGINT,
         allowNull: false,
         comment: "null",
@@ -20,7 +21,8 @@ export default function (sequelize, DataTypes) {
           key: "id",
         },
       },
-      product_id: {
+      productId: {
+        field: "product_id",
         type: DataTypes.BIGINT,
         allowNull: false,
         comment: "null",
@@ -71,22 +73,25 @@ export default function (sequelize, DataTypes) {
     },
     {
       tableName: "order_product",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 
   OrderProduct.associate = (models) => {
-    OrderProduct.belongsTo(models.Order, {
-      as: "order",
-      foreignKey: "order_id",
-    });
-    OrderProduct.belongsTo(models.Product, {
-      as: "product",
-      foreignKey: "product_id",
-    });
-    OrderProduct.belongsTo(models.VariationOption, {
-      as: "variation_option",
-      foreignKey: "variation_option_id",
-    });
+    // OrderProduct.belongsTo(models.Order, {
+    //   as: "order",
+    //   foreignKey: "order_id",
+    // });
+    // OrderProduct.belongsTo(models.Product, {
+    //   as: "product",
+    //   foreignKey: "product_id",
+    // });
+    // OrderProduct.belongsTo(models.VariationOption, {
+    //   as: "variation_option",
+    //   foreignKey: "variation_option_id",
+    // });
   };
 
   return OrderProduct;

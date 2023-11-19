@@ -79,6 +79,9 @@ export default function (sequelize, DataTypes) {
     },
     {
       tableName: "shops",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 

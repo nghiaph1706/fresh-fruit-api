@@ -207,6 +207,9 @@ export default function (sequelize, DataTypes) {
     },
     {
       tableName: "products",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 
@@ -215,6 +218,10 @@ export default function (sequelize, DataTypes) {
     Product.belongsTo(models.Manufacturer, { foreignKey: "manufacturer_id" });
     Product.belongsTo(models.Type, { foreignKey: "type_id" });
     Product.belongsTo(models.Shop, { foreignKey: "shop_id" });
+    Product.belongsToMany(models.Order, {
+      through: models.OrderProduct,
+      sourceKey: "id",
+    });
   };
 
   return Product;
