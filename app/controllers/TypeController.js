@@ -5,8 +5,8 @@ import { models } from "../models/index.js";
 const { Banner, Type } = models;
 
 export const index = async (req, res) => {
-  const language = req.body.language
-    ? req.body.language
+  const language = req.query.language
+    ? req.query.language
     : constants.DEFAULT_LANGUAGE;
 
   const types = await Type.findAll({

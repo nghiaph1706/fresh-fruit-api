@@ -6,6 +6,7 @@ import * as ManufacturerController from "../controllers/ManufacturerController.j
 import * as ProductController from "../controllers/ProductController.js";
 import * as StoreNoticeController from "../controllers/StoreNoticeController.js";
 import * as TypeController from "../controllers/TypeController.js";
+import * as CategoryController from "../controllers/CategoryController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -28,5 +29,7 @@ router.get("/products", ProductController.index);
 router.get("/products/:slug", ProductController.show);
 router.get("/types", TypeController.index);
 router.get("/types/:slug", TypeController.show);
+router.get("/categories", CategoryController.index);
+router.get("/categories/:slug", CategoryController.show);
 
 export default router;
