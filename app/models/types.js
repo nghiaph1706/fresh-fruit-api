@@ -68,6 +68,7 @@ export default function (sequelize, DataTypes) {
     });
     Type.hasMany(models.Banner, { foreignKey: "type_id", as: "banners" });
     Type.hasMany(models.Category, { foreignKey: "type_id", as: "categories" });
+    Type.hasMany(models.Tag, { foreignKey: "type_id", as: "tags" });
   };
 
   return Type;
