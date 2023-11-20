@@ -222,6 +222,10 @@ export default function (sequelize, DataTypes) {
       through: models.OrderProduct,
       sourceKey: "id",
     });
+    Product.belongsToMany(models.Category, {
+      through: models.CategoryProduct,
+      sourceKey: "id",
+    });
   };
 
   return Product;
