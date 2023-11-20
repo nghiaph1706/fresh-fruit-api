@@ -18,6 +18,7 @@ import CategoryProductModel from "./category_product.js";
 import BannerModel from "./banners.js";
 import DeliveryTimeModel from "./delivery_times.js";
 import LanguageModel from "./languages.js";
+import TagModel from "./tags.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -54,6 +55,7 @@ const models = {
   Banner: BannerModel(sequelize, Sequelize.DataTypes),
   DeliveryTime: DeliveryTimeModel(sequelize, Sequelize.DataTypes),
   Language: LanguageModel(sequelize, Sequelize.DataTypes),
+  Tag: TagModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 
