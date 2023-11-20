@@ -24,7 +24,7 @@ export const index = async (req, res) => {
 //       },
 //     });
 //     if (!shop) {
-//       throw new Error(constants.NOT_FOUND);
+//       res.status(404).json({ message: constants.NOT_FOUND });
 //     }
     
 //     const storeNotices = 

@@ -16,6 +16,7 @@ import AvailabilityModel from "./availabilities.js";
 import CategoryModel from "./categories.js";
 import CategoryProductModel from "./category_product.js";
 import BannerModel from "./banners.js";
+import DeliveryTimeModel from "./delivery_times.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -50,6 +51,7 @@ const models = {
   Category: CategoryModel(sequelize, Sequelize.DataTypes),
   CategoryProduct: CategoryProductModel(sequelize, Sequelize.DataTypes),
   Banner: BannerModel(sequelize, Sequelize.DataTypes),
+  DeliveryTime: DeliveryTimeModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 
