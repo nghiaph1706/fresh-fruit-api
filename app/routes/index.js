@@ -5,6 +5,7 @@ import * as AuthorController from "../controllers/AuthorController.js";
 import * as ManufacturerController from "../controllers/ManufacturerController.js";
 import * as ProductController from "../controllers/ProductController.js";
 import * as StoreNoticeController from "../controllers/StoreNoticeController.js";
+import * as TypeController from "../controllers/TypeController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -25,5 +26,7 @@ router.get("/popular-products", ProductController.popularProducts);
 router.get("/store-notices", authMiddleware([]), StoreNoticeController.index);
 router.get("/products", ProductController.index);
 router.get("/products/:slug", ProductController.show);
+router.get("/types", TypeController.index);
+router.get("/types/:slug", TypeController.show);
 
 export default router;

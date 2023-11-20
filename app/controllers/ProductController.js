@@ -140,7 +140,6 @@ export const show = async (req, res) => {
 
     res.json({ product, relatedProducts });
   } catch (error) {
-    throw new Error(error)
     res.status(404).json({ message: constants.NOT_FOUND });
   }
 };

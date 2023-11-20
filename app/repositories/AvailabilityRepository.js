@@ -35,7 +35,7 @@ function isProductAvailableAt(
 ) {
   let quantity = 0;
 
-  Product.findById(productId)
+  Product.findByPk(productId)
     .then((product) => {
       blockedDates.forEach((singleDate) => {
         const period = moment.range(singleDate.from, singleDate.to);
