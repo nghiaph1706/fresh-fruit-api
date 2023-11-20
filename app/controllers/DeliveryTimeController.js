@@ -1,46 +1,35 @@
-import { Op } from "sequelize";
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 
-const { Banner, Type } = models;
+const { DeliveryTime } = models;
 
 export const index = async (req, res) => {
   const language = req.query.language
     ? req.query.language
     : constants.DEFAULT_LANGUAGE;
 
-  const types = await Type.findAll({
+  const deliveryTimes = await DeliveryTime.findAll({
     where: {
       language,
     },
   });
 
-  return res.json({ types });
+  return res.json({ deliveryTimes });
 };
 
 export const show = async (req, res) => {
   const { slug } = req.params;
   const language = req.query.language || constants.DEFAULT_LANGUAGE;
 
-  let type;
+  const deliveryTime = await DeliveryTime.findByPk(slug, {
+    where: {
+      language,
+    },
+  });
 
-  if (!isNaN(slug)) {
-    type = await Type.findByPk(slug, {
-      include: [{ model: Banner, as: "banners" }],
-    });
-  } else {
-    type = await Type.findOne({
-      where: {
-        language,
-        slug,
-      },
-      include: [{ model: Banner, as: "banners" }],
-    });
-  }
-
-  if (!type) {
+  if (!deliveryTime) {
     res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ type });
+  res.json({ deliveryTime });
 };

@@ -74,7 +74,7 @@ export const show = async (req, res) => {
   }
 
   if (!category) {
-    throw new Error(constants.NOT_FOUND);
+    res.status(404).json({ message: constants.NOT_FOUND });
   }
 
   res.json({ category });
