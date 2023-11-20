@@ -23,5 +23,7 @@ router.get("/top-authors", AuthorController.topAuthor);
 router.get("/top-manufacturers", ManufacturerController.topManufacturer);
 router.get("/popular-products", ProductController.popularProducts);
 router.get("/store-notices", authMiddleware([]), StoreNoticeController.index);
+router.get("/products", ProductController.index);
+router.get("/products/:slug", ProductController.show);
 
 export default router;
