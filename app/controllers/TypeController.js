@@ -39,7 +39,7 @@ export const show = async (req, res) => {
   }
 
   if (!type) {
-    res.status(404).json({ message: constants.NOT_FOUND });
+    return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
   res.json({ type });

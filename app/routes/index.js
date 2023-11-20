@@ -8,6 +8,7 @@ import * as StoreNoticeController from "../controllers/StoreNoticeController.js"
 import * as TypeController from "../controllers/TypeController.js";
 import * as CategoryController from "../controllers/CategoryController.js";
 import * as DeliveryTimeController from "../controllers/DeliveryTimeController.js";
+import * as LanguageController from "../controllers/LanguageController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -34,5 +35,7 @@ router.get("/categories", CategoryController.index);
 router.get("/categories/:slug", CategoryController.show);
 router.get("/delivery-times", DeliveryTimeController.index);
 router.get("/delivery-times/:slug", DeliveryTimeController.show);
+router.get("/languages", LanguageController.index);
+router.get("/languages/:slug", LanguageController.show);
 
 export default router;
