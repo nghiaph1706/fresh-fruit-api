@@ -28,7 +28,7 @@ export const popularProducts = async (req, res) => {
         if (type) {
           type_id = type.id;
         } else {
-          res.status(404).json({ message: constants.NOT_FOUND });
+          return res.status(404).json({ message: constants.NOT_FOUND });
         }
       } catch (error) {
         console.error(error);
@@ -129,7 +129,7 @@ export const show = async (req, res) => {
     }
 
     if (!product) {
-      res.status(404).json({ message: constants.NOT_FOUND });
+      return res.status(404).json({ message: constants.NOT_FOUND });
     }
     // Fetch related products
     const relatedProducts = await ProductRepository.fetchRelated(
@@ -140,6 +140,6 @@ export const show = async (req, res) => {
 
     res.json({ product, relatedProducts });
   } catch (error) {
-    res.status(404).json({ message: constants.NOT_FOUND });
+    return res.status(404).json({ message: constants.NOT_FOUND });
   }
 };
