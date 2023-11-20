@@ -24,7 +24,7 @@ export const fetchRelated = async (
           model: Category,
           where: {
             id: {
-              [Op.in]: categories || [], // Ensure categories is an array of IDs
+              [Op.in]: categories
             },
           },
           as: "categories",
@@ -33,7 +33,7 @@ export const fetchRelated = async (
           model: Type,
         },
       ],
-      limit: parseInt(limit), // Ensure limit is converted to a number
+      limit: limit
     });
 
     return relatedProducts;

@@ -42,7 +42,8 @@ export default function (sequelize, DataTypes) {
         allowNull: true,
         comment: "null",
       },
-      parent: {
+      parent_id: {
+        field: "parent",
         type: DataTypes.BIGINT,
         allowNull: true,
         comment: "null",
@@ -85,9 +86,18 @@ export default function (sequelize, DataTypes) {
   );
 
   Category.associate = (models) => {
+    Category.belongsTo(models.Type, { foreignKey: "type_id", as: "type" });
     Category.belongsToMany(models.Product, {
       through: models.CategoryProduct,
-      sourceKey: "id"
+      sourceKey: "id",
+    });
+    Category.belongsTo(models.Category, {
+      as: "parent",
+      foreignKey: "parent_id",
+    });
+    Category.hasMany(models.Category, {
+      as: "children",
+      foreignKey: "parent_id",
     });
   };
 

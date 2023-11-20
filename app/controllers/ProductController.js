@@ -86,10 +86,10 @@ export const popularProducts = async (req, res) => {
 export const index = async (req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
   const unavailableProducts = [];
-  const language = req.body.language
-    ? req.body.language
+  const language = req.query.language
+    ? req.query.language
     : constants.DEFAULT_LANGUAGE;
-  if (req.body.date_range) {
+  if (req.query.date_range) {
     const dateRange = req.body.date_range.split("//");
     unavailableProducts = AvailabilityRepository.getUnavailableProducts(
       dateRange[0],
@@ -112,7 +112,7 @@ export const index = async (req, res) => {
 export const show = async (req, res) => {
   const { slug } = req.params;
   const language = req.query.language || constants.DEFAULT_LANGUAGE;
-  const limit = req.query.limit || 10;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 10;
 
   try {
     let product;
