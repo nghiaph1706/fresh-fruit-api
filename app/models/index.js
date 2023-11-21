@@ -22,6 +22,8 @@ import TagModel from "./tags.js";
 import CouponModel from "./coupons.js";
 import SettingModel from "./settings.js";
 import ResourceModel from "./resources.js";
+import AttributeModel from "./attributes.js";
+import AttributeValueModel from "./attribute_values.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -62,6 +64,8 @@ const models = {
   Coupon: CouponModel(sequelize, Sequelize.DataTypes),
   Setting: SettingModel(sequelize, Sequelize.DataTypes),
   Resource: ResourceModel(sequelize, Sequelize.DataTypes),
+  Attribute: AttributeModel(sequelize, Sequelize.DataTypes),
+  AttributeValue: AttributeValueModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 
