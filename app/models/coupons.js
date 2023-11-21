@@ -60,6 +60,12 @@ export default function (sequelize, DataTypes) {
         allowNull: false,
         comment: "null",
       },
+      is_valid: {
+        type: DataTypes.INTEGER(1),
+        allowNull: false,
+        defaultValue: "0",
+        comment: "null",
+      },
       created_at: {
         type: DataTypes.DATE,
         allowNull: true,
