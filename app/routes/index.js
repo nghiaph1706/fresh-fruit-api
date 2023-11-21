@@ -43,5 +43,6 @@ router.get("/tags", TagController.index);
 router.get("/tags/:slug", TagController.show);
 router.get("/coupons", CouponController.index);
 router.get("/coupons/:slug", CouponController.show);
+router.post("/coupons/verify", CouponController.verify);
 
 export default router;
