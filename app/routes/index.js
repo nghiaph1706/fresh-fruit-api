@@ -12,6 +12,7 @@ import * as LanguageController from "../controllers/LanguageController.js";
 import * as TagController from "../controllers/TagController.js";
 import * as CouponController from "../controllers/CouponController.js";
 import * as ResourceController from "../controllers/ResourceController.js";
+import * as AttributeController from "../controllers/AttributeController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -47,5 +48,7 @@ router.get("/resources/:slug", ResourceController.show);
 router.get("/coupons", CouponController.index);
 router.get("/coupons/:slug", CouponController.show);
 router.post("/coupons/verify", CouponController.verify);
+router.get("/attributes", AttributeController.index);
+router.get("/attributes/:slug", AttributeController.show);
 
 export default router;
