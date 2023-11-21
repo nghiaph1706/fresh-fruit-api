@@ -27,6 +27,7 @@ import AttributeValueModel from "./attribute_values.js";
 import UserProfileModel from "./user_profiles.js";
 import UserShopModel from "./user_shop.js";
 import BalanceModel from "./balances.js";
+import ReviewModel from "./reviews.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -72,6 +73,7 @@ const models = {
   UserProfile: UserProfileModel(sequelize, Sequelize.DataTypes),
   UserShop: UserShopModel(sequelize, Sequelize.DataTypes),
   Balance: BalanceModel(sequelize, Sequelize.DataTypes),
+  Review: ReviewModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 
