@@ -11,6 +11,7 @@ import * as DeliveryTimeController from "../controllers/DeliveryTimeController.j
 import * as LanguageController from "../controllers/LanguageController.js";
 import * as TagController from "../controllers/TagController.js";
 import * as CouponController from "../controllers/CouponController.js";
+import * as ResourceController from "../controllers/ResourceController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -41,6 +42,8 @@ router.get("/languages", LanguageController.index);
 router.get("/languages/:slug", LanguageController.show);
 router.get("/tags", TagController.index);
 router.get("/tags/:slug", TagController.show);
+router.get("/resources", ResourceController.index);
+router.get("/resources/:slug", ResourceController.show);
 router.get("/coupons", CouponController.index);
 router.get("/coupons/:slug", CouponController.show);
 router.post("/coupons/verify", CouponController.verify);

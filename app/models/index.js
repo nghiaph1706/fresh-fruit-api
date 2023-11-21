@@ -21,6 +21,7 @@ import LanguageModel from "./languages.js";
 import TagModel from "./tags.js";
 import CouponModel from "./coupons.js";
 import SettingModel from "./settings.js";
+import ResourceModel from "./resources.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -60,6 +61,7 @@ const models = {
   Tag: TagModel(sequelize, Sequelize.DataTypes),
   Coupon: CouponModel(sequelize, Sequelize.DataTypes),
   Setting: SettingModel(sequelize, Sequelize.DataTypes),
+  Resource: ResourceModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 
