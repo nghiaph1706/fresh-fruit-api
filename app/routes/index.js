@@ -14,6 +14,7 @@ import * as CouponController from "../controllers/CouponController.js";
 import * as ResourceController from "../controllers/ResourceController.js";
 import * as AttributeController from "../controllers/AttributeController.js";
 import * as ShopController from "../controllers/ShopController.js";
+import * as SettingsController from "../controllers/SettingsController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -53,5 +54,6 @@ router.get("/attributes", AttributeController.index);
 router.get("/attributes/:slug", AttributeController.show);
 router.get("/shops", ShopController.index);
 router.get("/shops/:slug", authMiddleware([]), ShopController.show);
+router.get("/settings", SettingsController.index);
 
 export default router;
