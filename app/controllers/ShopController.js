@@ -46,7 +46,8 @@ export const index = async (req, res) => {
 
 export const show = async (req, res) => {
   const { slug } = req.params;
-  let isOwnerShop, isSuperAdmin;
+  let isOwnerShop = false;
+  let isSuperAdmin = false;
 
   if (req.permissions && req.user) {
     isSuperAdmin = req.permissions.includes(PermissionEnum.SUPER_ADMIN);
@@ -56,89 +57,42 @@ export const show = async (req, res) => {
     isOwnerShop = ownerShops.includes(slug);
   }
 
-  let shop;
+  const shopQuery = {
+    where: { slug },
+    attributes: {
+      include: [
+        [
+          literal(`(
+              SELECT COUNT(*)
+              FROM orders
+              WHERE orders.shop_id = shops.id
+            )`),
+          "ordersCount",
+        ],
+        [
+          literal(`(
+              SELECT COUNT(*)
+              FROM products
+              WHERE products.shop_id = shops.id
+            )`),
+          "productsCount",
+        ],
+      ],
+    },
+    include: [
+      {
+        model: User,
+        as: "owner",
+        include: [{ model: UserProfile, as: "profile" }],
+      },
+    ],
+  };
 
   if (isSuperAdmin || isOwnerShop) {
-    shop = await Shop.findOne({
-      where: {
-        slug,
-      },
-      attributes: {
-        include: [
-          [
-            literal(`(
-                SELECT COUNT(*)
-                FROM orders
-                WHERE orders.shop_id = shops.id
-              )`),
-            "ordersCount",
-          ],
-          [
-            literal(`(
-                SELECT COUNT(*)
-                FROM products
-                WHERE products.shop_id = shops.id
-              )`),
-            "productsCount",
-          ],
-        ],
-      },
-      include: [
-        {
-          model: User,
-          as: "owner",
-          include: [
-            {
-              model: UserProfile,
-              as: "profile",
-            },
-          ],
-        },
-        {
-          model: Balance,
-          as: "balance"
-        }
-      ],
-    });
-  } else {
-    shop = await Shop.findOne({
-      where: {
-        slug,
-      },
-      attributes: {
-        include: [
-          [
-            literal(`(
-                SELECT COUNT(*)
-                FROM orders
-                WHERE orders.shop_id = shops.id
-              )`),
-            "ordersCount",
-          ],
-          [
-            literal(`(
-                SELECT COUNT(*)
-                FROM products
-                WHERE products.shop_id = shops.id
-              )`),
-            "productsCount",
-          ],
-        ],
-      },
-      include: [
-        {
-          model: User,
-          as: "owner",
-          include: [
-            {
-              model: UserProfile,
-              as: "profile",
-            },
-          ],
-        },
-      ],
-    });
+    shopQuery.include.push({ model: Balance, as: "balance" });
   }
+
+  const shop = await Shop.findOne(shopQuery);
 
   if (!shop) {
     return res.status(404).json({ message: constants.NOT_FOUND });

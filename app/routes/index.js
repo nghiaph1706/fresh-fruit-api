@@ -17,6 +17,7 @@ import * as ShopController from "../controllers/ShopController.js";
 import * as SettingsController from "../controllers/SettingsController.js";
 import * as ReviewController from "../controllers/ReviewController.js";
 import * as QuestionController from "../controllers/QuestionController.js";
+import * as FeedbackController from "../controllers/FeedbackController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -61,5 +62,7 @@ router.get("/reviews", ReviewController.index);
 router.get("/reviews/:slug", ReviewController.show);
 router.get("/questions", QuestionController.index);
 router.get("/questions/:slug", QuestionController.show);
+router.get("/feedbacks", FeedbackController.index);
+router.get("/feedbacks/:slug", FeedbackController.show);
 
 export default router;
