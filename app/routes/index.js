@@ -10,6 +10,7 @@ import * as CategoryController from "../controllers/CategoryController.js";
 import * as DeliveryTimeController from "../controllers/DeliveryTimeController.js";
 import * as LanguageController from "../controllers/LanguageController.js";
 import * as TagController from "../controllers/TagController.js";
+import * as CouponController from "../controllers/CouponController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -40,5 +41,7 @@ router.get("/languages", LanguageController.index);
 router.get("/languages/:slug", LanguageController.show);
 router.get("/tags", TagController.index);
 router.get("/tags/:slug", TagController.show);
+router.get("/coupons", CouponController.index);
+router.get("/coupons/:slug", CouponController.show);
 
 export default router;
