@@ -7,31 +7,35 @@ const { PersonalAccessToken } = models;
 
 export const authMiddleware = (roles) => {
   return async (req, res, next) => {
-    const permissions = [];
-    const authorizationHeader = req.headers["authorization"];
-    if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
-      const token = authorizationHeader.substring(7);
-      const personalAccessToken = await PersonalAccessToken.findOne({
-        where: {
-          token: token,
-        },
-      });
-      const user = await personalAccessToken.getUser();
-      req.user = user;
-      permissions = await AuthService.getPermissionNames(
-        await user.getPermissions()
-      );
+    try {
+      let permissions = [];
+      const authorizationHeader = req.headers["authorization"];
+      if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
+        const token = authorizationHeader.substring(7);
+        const personalAccessToken = await PersonalAccessToken.findOne({
+          where: {
+            token: token,
+          },
+        });
+        const user = await personalAccessToken.getUser();
+        req.user = user;
+        permissions = await AuthService.getPermissionNames(
+          await user.getPermissions()
+        );
+      }
+      if (roles.length) {
+        roles.forEach((role) => {
+          if (permissions.includes(role)) {
+            req.permissions = permissions;
+            return next();
+          }
+        });
+        res.status(403).json({ message: constants.NOT_AUTHORIZED });
+      }
+      req.permissions = permissions;
+      return next();
+    } catch (error) {
+      return next();
     }
-    if (roles.length) {
-      roles.forEach((role) => {
-        if (permissions.includes(role)) {
-          req.permissions = permissions;
-          return next();
-        }
-      });
-      res.status(403).json({ message: constants.NOT_AUTHORIZED });
-    }
-    req.permissions = permissions;
-    return next();
   };
 };
