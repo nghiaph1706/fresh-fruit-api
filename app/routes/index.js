@@ -13,6 +13,7 @@ import * as TagController from "../controllers/TagController.js";
 import * as CouponController from "../controllers/CouponController.js";
 import * as ResourceController from "../controllers/ResourceController.js";
 import * as AttributeController from "../controllers/AttributeController.js";
+import * as ShopController from "../controllers/ShopController.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
@@ -50,5 +51,7 @@ router.get("/coupons/:slug", CouponController.show);
 router.post("/coupons/verify", CouponController.verify);
 router.get("/attributes", AttributeController.index);
 router.get("/attributes/:slug", AttributeController.show);
+router.get("/shops", ShopController.index);
+router.get("/shops/:slug", authMiddleware([]), ShopController.show);
 
 export default router;

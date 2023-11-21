@@ -24,6 +24,9 @@ import SettingModel from "./settings.js";
 import ResourceModel from "./resources.js";
 import AttributeModel from "./attributes.js";
 import AttributeValueModel from "./attribute_values.js";
+import UserProfileModel from "./user_profiles.js";
+import UserShopModel from "./user_shop.js";
+import BalanceModel from "./balances.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -66,6 +69,9 @@ const models = {
   Resource: ResourceModel(sequelize, Sequelize.DataTypes),
   Attribute: AttributeModel(sequelize, Sequelize.DataTypes),
   AttributeValue: AttributeValueModel(sequelize, Sequelize.DataTypes),
+  UserProfile: UserProfileModel(sequelize, Sequelize.DataTypes),
+  UserShop: UserShopModel(sequelize, Sequelize.DataTypes),
+  Balance: BalanceModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 

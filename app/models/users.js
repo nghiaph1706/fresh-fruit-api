@@ -65,6 +65,14 @@ export default function (sequelize, DataTypes) {
       through: models.UserHasPermission,
       sourceKey: "id",
     });
+    User.hasOne(models.UserProfile, {
+      foreignKey: "customer_id",
+      as: "profile",
+    });
+    User.belongsToMany(models.Shop, {
+      through: models.UserShop,
+      sourceKey: "id",
+    });
   };
 
   return User;

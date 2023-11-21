@@ -94,6 +94,14 @@ export default function (sequelize, DataTypes) {
       foreignKey: "shop_id",
       as: "products",
     });
+    Shop.belongsToMany(models.User, {
+      through: models.UserShop,
+      sourceKey: "id",
+    });
+    Shop.hasOne(models.Balance, {
+      foreignKey: "shop_id",
+      as: "balance",
+    });
   };
 
   return Shop;
