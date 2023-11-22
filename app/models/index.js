@@ -30,6 +30,7 @@ import BalanceModel from "./balances.js";
 import ReviewModel from "./reviews.js";
 import QuestionModel from "./questions.js";
 import FeedbackModel from "./feedbacks.js";
+import VariationModel from "./variation_options.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -78,6 +79,7 @@ const models = {
   Review: ReviewModel(sequelize, Sequelize.DataTypes),
   Question: QuestionModel(sequelize, Sequelize.DataTypes),
   Feedback: FeedbackModel(sequelize, Sequelize.DataTypes),
+  Variation: VariationModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 

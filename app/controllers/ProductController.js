@@ -143,3 +143,92 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 };
+
+export const calculateRentalPrice = async (req, res) => {
+  const { product_id } = req.query;
+  let isAvailable = true;
+  try {
+    const product = await Product.findOne({
+      where: {
+        id: product_id,
+      },
+    });
+    if (!product) {
+      throw new Error(constants.NOT_FOUND);
+    }
+    // TODO: Check database for is_rental
+    // if (!product.is_rental) {
+    //   throw new Error(constants.NOT_A_RENTAL_PRODUCT);
+    // }
+    const variation_id = req.query.variation_id;
+    const quantity = req.query.quantity;
+    const persons = req.query.persons;
+    const dropoff_location_id = req.query.dropoff_location_id;
+    const pickup_location_id = req.query.pickup_location_id;
+    const deposits = req.query.deposits;
+    const features = req.query.features;
+    const from = req.query.from;
+    const to = req.query.to;
+
+    let blockedDates = [];
+    if (variation_id) {
+      blockedDates =
+        await ProductRepository.fetchBlockedDatesForAVariationInRange(
+          from,
+          to,
+          variation_id
+        );
+      isAvailable = await ProductRepository.isVariationAvailableAt(
+        from,
+        to,
+        variation_id,
+        blockedDates,
+        quantity
+      );
+      if (!isAvailable) {
+        throw new Error(constants.NOT_AVAILABLE_FOR_BOOKING);
+      }
+    } else {
+      blockedDates =
+        await ProductRepository.fetchBlockedDatesForAProductInRange(
+          from,
+          to,
+          product_id
+        );
+      isAvailable = await ProductRepository.isProductAvailableAt(
+        from,
+        to,
+        product_id,
+        blockedDates,
+        quantity
+      );
+      if (!isAvailable) {
+        throw new Error(constants.NOT_AVAILABLE_FOR_BOOKING);
+      }
+    }
+
+    const from_date = new Date(from);
+    const to_date = new Date(to);
+
+    const bookedDay = Math.ceil(
+      (to_date.getTime() - from_date.getTime()) / (1000 * 3600 * 24)
+    );
+
+    const price = await ProductRepository.calculatePrice(
+      bookedDay,
+      product_id,
+      variation_id,
+      quantity,
+      persons,
+      dropoff_location_id,
+      pickup_location_id,
+      deposits,
+      features
+    );
+
+    return res.json({ price });
+  } catch (error) {
+    console.error(error);
+    return res.status(404).json({ message: error.message });
+  }
+};
