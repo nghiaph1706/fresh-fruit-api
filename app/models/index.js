@@ -30,6 +30,10 @@ import BalanceModel from "./balances.js";
 import ReviewModel from "./reviews.js";
 import QuestionModel from "./questions.js";
 import FeedbackModel from "./feedbacks.js";
+import WalletModel from "./wallets.js";
+import VariationModel from "./variation_options.js";
+import ShippingModel from "./shipping_classes.js";
+import TaxModel from "./tax_classes.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -78,6 +82,10 @@ const models = {
   Review: ReviewModel(sequelize, Sequelize.DataTypes),
   Question: QuestionModel(sequelize, Sequelize.DataTypes),
   Feedback: FeedbackModel(sequelize, Sequelize.DataTypes),
+  Wallet: WalletModel(sequelize, Sequelize.DataTypes),
+  Variation: VariationModel(sequelize, Sequelize.DataTypes),
+  Shipping: ShippingModel(sequelize, Sequelize.DataTypes),
+  Tax: TaxModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 

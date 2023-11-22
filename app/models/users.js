@@ -73,6 +73,10 @@ export default function (sequelize, DataTypes) {
       through: models.UserShop,
       sourceKey: "id",
     });
+    User.hasOne(models.Wallet, {
+      foreignKey: "customer_id",
+      as: "wallet",
+    });
   };
 
   return User;

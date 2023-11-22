@@ -218,6 +218,7 @@ export default function (sequelize, DataTypes) {
     Product.belongsTo(models.Manufacturer, { foreignKey: "manufacturer_id" });
     Product.belongsTo(models.Type, { foreignKey: "type_id" });
     Product.belongsTo(models.Shop, { foreignKey: "shop_id" });
+    Product.belongsTo(models.Shipping, { foreignKey: "shipping_class_id" });
     Product.belongsToMany(models.Order, {
       through: models.OrderProduct,
       sourceKey: "id",

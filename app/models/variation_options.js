@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 export default function (sequelize, DataTypes) {
-  return sequelize.define('variation_options', {
+  const Variation = sequelize.define('variation_options', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -82,6 +82,15 @@ export default function (sequelize, DataTypes) {
       comment: 'null'
     }
   }, {
-    tableName: 'variation_options'
+    tableName: 'variation_options',
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
   })
+
+  Variation.associate = (models) => {
+    Variation.belongsTo(models.Product, { foreignKey: "product_id", as: "product" });
+  };
+
+  return Variation
 };
