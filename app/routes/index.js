@@ -80,5 +80,5 @@ router.post(
  * Authorized Route for Customers only
  * ******************************************
  */
-router.post("/wishlists/toggle", authMiddleware([]), WishlistController.toggle);
+router.post("/wishlists/toggle", authMiddleware([PermissionEnum.CUSTOMER]), WishlistController.toggle);
 export default router;
