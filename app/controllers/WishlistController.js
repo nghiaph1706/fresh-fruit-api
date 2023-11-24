@@ -69,3 +69,22 @@ export const destroy = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const in_wishlist = async (req, res) => {
+  try {
+    const wishlist = await Wishlist.findOne({
+      where: {
+        user_id: req.user.id,
+        product_id: req.params.product_id,
+      },
+    });
+    if (wishlist) {
+      res.send(true);
+    } else {
+      res.send(false);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
