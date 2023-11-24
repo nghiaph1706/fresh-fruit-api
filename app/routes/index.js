@@ -100,4 +100,9 @@ router.delete(
   authMiddleware([PermissionEnum.CUSTOMER]),
   WishlistController.destroy
 );
+router.get(
+  "/wishlists/in_wishlist/:product_id",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  WishlistController.in_wishlist
+);
 export default router;
