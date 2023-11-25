@@ -139,7 +139,7 @@ export const show = async (req, res) => {
 export const myWishlists = async (req, res) => {
   try {
     const products = await ProductRepository.fetchWishlists(req);
-    res.send(products);
+    res.json({data: products});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
