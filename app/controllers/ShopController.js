@@ -147,3 +147,18 @@ export const userFollowedShops = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 };
+
+export const userFollowedShop = async (req, res) => {
+  try {
+    const user = req.user;
+    const userShops = await user.getShops();
+    const followedShopIds = userShops.map((shop) => shop.id);
+
+    const shop_id = parseInt(req.query.shop_id);
+
+    return res.send(followedShopIds.includes(shop_id));
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
+};
