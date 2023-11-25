@@ -6,7 +6,7 @@ const { Language } = models;
 export const index = async (req, res) => {
   const languages = await Language.findAll({});
 
-  return res.json({ languages });
+  return res.json({ data: languages });
 };
 
 export const show = async (req, res) => {
@@ -18,5 +18,5 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ language });
+  res.json({ data: language });
 };

@@ -17,7 +17,7 @@ export const index = async (req, res) => {
     limit: limit,
   });
 
-  return res.json({ coupons });
+  return res.json({ data: coupons });
 };
 
 export const show = async (req, res) => {
@@ -41,7 +41,7 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ coupon });
+  res.json({data: coupon });
 };
 
 export const verify = async (req, res) => {

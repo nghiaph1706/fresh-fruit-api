@@ -15,7 +15,7 @@ export const index = async (req, res) => {
     },
   });
 
-  return res.json({ types });
+  return res.send(types);
 };
 
 export const show = async (req, res) => {
@@ -42,5 +42,5 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ type });
+  res.send(type);
 };

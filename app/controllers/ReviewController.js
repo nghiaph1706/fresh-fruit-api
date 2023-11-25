@@ -1,7 +1,7 @@
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 
-const { Review } = models;
+const { Review, Order, Product } = models;
 
 export const index = async (req, res) => {
   const product_id = req.query.product_id;
@@ -14,7 +14,7 @@ export const index = async (req, res) => {
       limit: limit,
     });
 
-    return res.json({ reviews });
+    return res.json({ data: reviews });
   }
   return res.status(404).json({ message: constants.NOT_FOUND });
 };
@@ -28,5 +28,62 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ review });
+  res.send(review);
+};
+
+export const store = async (req, res) => {
+  const { product_id, order_id, shop_id } = req.body;
+
+  const hasProductInOrder = await Order.findOne({
+    where: {
+      id: order_id,
+    },
+    include: [
+      {
+        model: Product,
+        where: {
+          id: product_id,
+        },
+      },
+    ],
+  });
+
+  if (!hasProductInOrder) {
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
+
+  try {
+    const user_id = req.user.id;
+    let query = {
+      where: {
+        user_id,
+        order_id,
+        product_id,
+        shop_id,
+      },
+    };
+    if (req.body.variation_option_id) {
+      query.where.variation_option_id = req.body.variation_option_id;
+    }
+    const review = await Review.findOne(query);
+
+    if (review) {
+      return res
+        .status(400)
+        .json({ message: constants.ALREADY_GIVEN_REVIEW_FOR_THIS_PRODUCT });
+    }
+
+    const data = {
+      ...req.body,
+      user_id,
+    };
+
+    const newReview = await Review.create(data);
+
+    return res.json({ data: newReview });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: constants.ALREADY_GIVEN_REVIEW_FOR_THIS_PRODUCT });
+  }
 };

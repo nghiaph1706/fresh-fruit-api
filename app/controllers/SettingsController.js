@@ -14,5 +14,5 @@ export const index = async (req, res) => {
     },
   });
 
-  return res.json({ settings });
+  return res.send(settings);
 };

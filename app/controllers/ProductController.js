@@ -68,7 +68,7 @@ export const popularProducts = async (req, res) => {
     // Execute the query
     const products = await Product.findAll(baseQuery);
 
-    return res.json({ products });
+    return res.send(products);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -98,7 +98,7 @@ export const index = async (req, res) => {
     limit: limit,
   });
 
-  return res.json({ products });
+  return res.json({ data: products });
 };
 
 export const show = async (req, res) => {

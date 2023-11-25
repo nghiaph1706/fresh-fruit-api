@@ -36,7 +36,7 @@ export const index = async (req, res) => {
     });
   }
 
-  return res.json({ categories });
+  return res.json({ data: categories });
 };
 
 export const show = async (req, res) => {
@@ -77,5 +77,5 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ category });
+  res.json({ data: category });
 };

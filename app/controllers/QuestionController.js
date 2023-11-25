@@ -20,14 +20,14 @@ export const index = async (req, res) => {
       limit: limit,
     });
 
-    return res.json({ questions });
+    return res.json({ data: questions });
   }
   if (!answer) {
     questions = await Question.findAll({
       limit: limit,
     });
 
-    return res.json({ questions });
+    return res.json({ data: questions });
   }
   questions = await Question.findAll({
     where: {
@@ -38,7 +38,7 @@ export const index = async (req, res) => {
     limit: limit,
   });
 
-  return res.json({ questions });
+  return res.json({ data:questions });
 };
 
 export const show = async (req, res) => {
@@ -50,5 +50,5 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ question });
+  res.json({ data: question });
 };

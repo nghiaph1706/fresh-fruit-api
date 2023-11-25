@@ -120,6 +120,12 @@ router.put(
   authMiddleware([PermissionEnum.CUSTOMER]),
   UserController.update
 );
+
+router.post(
+  "/reviews",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  ReviewController.store
+);
 router.get(
   "/followed-shops-popular-products",
   authMiddleware([PermissionEnum.CUSTOMER]),
