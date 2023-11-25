@@ -3,7 +3,7 @@ import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import PermissionEnum from "../config/enum/Permission.js";
 
-const { Shop, User, UserProfile, Balance } = models;
+const { Shop, User, UserProfile, Balance, Product } = models;
 
 export const index = async (req, res) => {
   const shops = await Shop.findAll({
@@ -99,4 +99,37 @@ export const show = async (req, res) => {
   }
 
   res.json({ shop });
+};
+
+export const followedShopsPopularProducts = async (req, res) => {
+  try {
+    const user = req.user;
+    const userShops = await user.getShops();
+    const followedShopIds = userShops.map((shop) => shop.id);
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+
+    const products = await Product.findAll({
+      attributes: {
+        include: [
+          [
+            literal(`(
+              SELECT COUNT(*)
+              FROM order_product
+              WHERE order_product.product_id = products.id
+            )`),
+            "ordersCount",
+          ],
+        ],
+      },
+      include: [{ model: Shop, as: "shop" }],
+      where: { shop_id: { [Op.in]: followedShopIds } },
+      order: [["ordersCount", "DESC"]],
+      limit,
+    });
+
+    return res.send(products);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
 };

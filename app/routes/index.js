@@ -119,4 +119,10 @@ router.put(
   authMiddleware([PermissionEnum.CUSTOMER]),
   UserController.update
 );
+// Route::get('/followed-shops-popular-products', [ShopController::class, 'followedShopsPopularProducts']);
+router.get(
+  "/followed-shops-popular-products",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  ShopController.followedShopsPopularProducts
+);
 export default router;
