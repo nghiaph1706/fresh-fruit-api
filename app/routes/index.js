@@ -130,4 +130,9 @@ router.get(
   authMiddleware([PermissionEnum.CUSTOMER]),
   ShopController.userFollowedShops
 );
+router.get(
+  "/follow-shop",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  ShopController.userFollowedShop
+);
 export default router;
