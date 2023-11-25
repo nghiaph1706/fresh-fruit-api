@@ -216,6 +216,7 @@ export const me = async (req, res) => {
             id: user.id,
           },
           include: [
+            { model: models.Address, as: "address" },
             { model: models.UserProfile, as: "profile" },
             { model: models.Wallet, as: "wallet" },
             {

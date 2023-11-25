@@ -41,7 +41,7 @@ export const index = async (req, res) => {
     ],
   });
 
-  return res.send(shops);
+  return res.json({ data: shops });
 };
 
 export const show = async (req, res) => {
