@@ -1,10 +1,12 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { models } from "../models/index.js";
-import permissions from "../models/permissions.js";
+import PermissionEnum from "../models/permissions.js";
+import constants from "../config/constants.js";
 
 dotenv.config();
-const { Permission, UserHasPermission, PersonalAccessToken, User } = models;
+const { Permission, UserHasPermission, PersonalAccessToken, User, Shop } =
+  models;
 
 export const createToken = async (user) => {
   const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
@@ -61,10 +63,49 @@ export const givePermissionTo = async (user, permissionNames) => {
 };
 
 export const destroyAccessToken = async (token) => {
-  return await PersonalAccessToken.destroy({
+  return (await PersonalAccessToken.destroy({
     where: {
       name: "auth_token",
       token: token,
     },
-  }) > 0 ? true : false;
+  })) > 0
+    ? true
+    : false;
+};
+
+export const hasPermission = async (user, shopId = null) => {
+  console.log(user);
+  const permissions = await user.getPermissions();
+  if (user && permissions.includes(PersonalAccessToken.SUPER_ADMIN)) {
+    return true;
+  }
+
+  try {
+    const shop = await Shop.findByPk(shopId, {
+      include: [
+        {
+          model: User,
+          as: "staffs",
+        },
+      ],
+    });
+
+    if (!shop) {
+      return false;
+    }
+
+    if (!shop.is_active) {
+      throw new Error(constants.SHOP_NOT_APPROVED);
+    }
+
+    if (user && permissions.includes(PermissionEnum.STORE_OWNER)) {
+      return shop.owner_id === user.id;
+    } else if (user && permissions.includes(PermissionEnum.STAFF)) {
+      return shop.staffs.length > 0;
+    }
+
+    return false;
+  } catch (error) {
+    return false;
+  }
 };

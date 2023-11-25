@@ -35,6 +35,8 @@ import VariationModel from "./variation_options.js";
 import ShippingModel from "./shipping_classes.js";
 import TaxModel from "./tax_classes.js";
 import WishlistModel from "./wishlists.js";
+import WalletPointModel from "./order_wallet_points.js";
+import PaymentIntentModel from "./payment_intents.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -88,6 +90,8 @@ const models = {
   Shipping: ShippingModel(sequelize, Sequelize.DataTypes),
   Tax: TaxModel(sequelize, Sequelize.DataTypes),
   Wishlist: WishlistModel(sequelize, Sequelize.DataTypes),
+  WalletPoint: WalletPointModel(sequelize, Sequelize.DataTypes),
+  PaymentIntent: PaymentIntentModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 

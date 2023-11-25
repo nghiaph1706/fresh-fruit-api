@@ -186,6 +186,22 @@ export default function (sequelize, DataTypes) {
       through: models.OrderProduct,
       sourceKey: "id",
     });
+    Order.belongsTo(models.Order, {
+      as: "parent",
+      foreignKey: "parent_id",
+    });
+    Order.hasMany(models.Order, {
+      as: "children",
+      foreignKey: "parent_id",
+    });
+    Order.belongsTo(models.Shop, {
+      as: "shop",
+      foreignKey: "shop_id",
+    });
+    Order.hasOne(models.WalletPoint, {
+      foreignKey: "order_id",
+      as: "wallet_point",
+    });
   };
 
   return Order;

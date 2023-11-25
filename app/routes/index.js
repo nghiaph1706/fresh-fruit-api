@@ -21,6 +21,7 @@ import * as TagController from "../controllers/TagController.js";
 import * as TypeController from "../controllers/TypeController.js";
 import * as UserController from "../controllers/UserController.js";
 import * as WishlistController from "../controllers/WishlistController.js";
+import * as OrderController from "../controllers/OrderController.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
 const router = express.Router();
@@ -68,12 +69,13 @@ router.get("/reviews/:slug", ReviewController.show);
 router.get("/questions", QuestionController.index);
 router.get("/questions/:slug", QuestionController.show);
 router.get("/feedbacks", FeedbackController.index);
-router.get("/feedbacks/:slug", FeedbackController.show);
+router.get("/feedbacks/:slug", authMiddleware([]), FeedbackController.show);
 router.post(
   "/orders/checkout/verify",
   authMiddleware([]),
   CheckoutController.verify
 );
+router.get("/orders/:slug", authMiddleware([]), OrderController.show);
 
 /**
  * ******************************************
