@@ -133,3 +133,17 @@ export const followedShopsPopularProducts = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 };
+
+export const userFollowedShops = async (req, res) => {
+  try {
+    const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+    const user = req.user;
+
+    const shops = await user.getShops({ limit });
+
+    return res.send(shops);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
+};
