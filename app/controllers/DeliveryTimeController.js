@@ -14,7 +14,7 @@ export const index = async (req, res) => {
     },
   });
 
-  return res.json({data: deliveryTimes });
+  return res.send(deliveryTimes);
 };
 
 export const show = async (req, res) => {
