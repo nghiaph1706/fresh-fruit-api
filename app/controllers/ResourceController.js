@@ -17,7 +17,7 @@ export const index = async (req, res) => {
     limit: limit,
   });
 
-  return res.json({ resources });
+  return res.json({ data: resources });
 };
 
 export const show = async (req, res) => {
@@ -41,5 +41,5 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ resource });
+  res.json({ data: resource });
 };

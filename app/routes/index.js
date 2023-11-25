@@ -120,4 +120,6 @@ router.put(
   authMiddleware([PermissionEnum.CUSTOMER]),
   UserController.update
 );
+
+// router.post("/reviews", authMiddleware([PermissionEnum.CUSTOMER]), ReviewController.store);
 export default router;

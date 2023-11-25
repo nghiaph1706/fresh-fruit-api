@@ -39,7 +39,7 @@ export const topManufacturer = async (req, res) => {
     });
 
     // Respond with the result
-    return res.json({ manufacturers });
+    return res.json({ data: manufacturers });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

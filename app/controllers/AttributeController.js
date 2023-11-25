@@ -24,7 +24,7 @@ export const index = async (req, res) => {
     ],
   });
 
-  return res.json({ attributes });
+  return res.json({data: attributes });
 };
 
 export const show = async (req, res) => {
@@ -61,5 +61,5 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ attribute });
+  res.json({ data: attribute });
 };

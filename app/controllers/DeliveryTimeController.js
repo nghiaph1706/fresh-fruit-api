@@ -14,7 +14,7 @@ export const index = async (req, res) => {
     },
   });
 
-  return res.json({ deliveryTimes });
+  return res.json({data: deliveryTimes });
 };
 
 export const show = async (req, res) => {
@@ -31,5 +31,5 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ deliveryTime });
+  res.send(deliveryTime);
 };

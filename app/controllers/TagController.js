@@ -20,7 +20,7 @@ export const index = async (req, res) => {
     ],
   });
 
-  return res.json({ tags });
+  return res.json({ data: tags });
 };
 
 export const show = async (req, res) => {
@@ -57,5 +57,5 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ tag });
+  res.json({ data: tag });
 };

@@ -42,7 +42,7 @@ export const topAuthor = async (req, res) => {
     });
 
     // Respond with the result
-    return res.json({ authors });
+    return res.json({ data: authors });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
