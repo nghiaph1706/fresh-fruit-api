@@ -107,4 +107,9 @@ router.get(
   authMiddleware([PermissionEnum.CUSTOMER]),
   WishlistController.in_wishlist
 );
+router.get(
+  "/my-wishlists",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  ProductController.myWishlists
+);
 export default router;

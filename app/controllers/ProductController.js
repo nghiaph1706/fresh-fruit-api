@@ -143,3 +143,13 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 };
+
+export const myWishlists = async (req, res) => {
+  try {
+    const products = await ProductRepository.fetchWishlists(req);
+    res.send(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
