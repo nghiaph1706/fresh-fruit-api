@@ -227,6 +227,10 @@ export default function (sequelize, DataTypes) {
       through: models.CategoryProduct,
       sourceKey: "id",
     });
+    Product.hasMany(models.OrderProduct, {
+      foreignKey: "product_id",
+      as: "pivot",
+    });
   };
 
   return Product;

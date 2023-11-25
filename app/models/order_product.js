@@ -80,14 +80,14 @@ export default function (sequelize, DataTypes) {
   );
 
   OrderProduct.associate = (models) => {
-    // OrderProduct.belongsTo(models.Order, {
-    //   as: "order",
-    //   foreignKey: "order_id",
-    // });
-    // OrderProduct.belongsTo(models.Product, {
-    //   as: "product",
-    //   foreignKey: "product_id",
-    // });
+    OrderProduct.belongsTo(models.Order, {
+      as: "order",
+      foreignKey: "order_id",
+    });
+    OrderProduct.belongsTo(models.Product, {
+      as: "product",
+      foreignKey: "product_id",
+    });
     // OrderProduct.belongsTo(models.VariationOption, {
     //   as: "variation_option",
     //   foreignKey: "variation_option_id",
