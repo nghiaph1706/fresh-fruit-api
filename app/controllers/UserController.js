@@ -168,7 +168,10 @@ export const resetPassword = async (req, res) => {
         email: req.body.email,
       },
     });
-    return res.json({ message: constants.PASSWORD_RESET_SUCCESSFUL, success: true });
+    return res.json({
+      message: constants.PASSWORD_RESET_SUCCESSFUL,
+      success: true,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -196,6 +199,45 @@ export const subscribeToNewsletter = async (req, res) => {
     const mailService = new MailService();
     await mailService.sendSubscribeToNewsletter(details);
     return res.send(true);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const me = async (req, res) => {
+  try {
+    const user = req.user;
+    if (user) {
+      return res.send(
+        await User.findOne({
+          where: {
+            id: user.id,
+          },
+          include: [
+            { model: models.UserProfile, as: "profile" },
+            { model: models.Wallet, as: "wallet" },
+            {
+              model: models.Shop,
+              as: "shops",
+              include: {
+                model: models.Balance,
+                as: "balance",
+              },
+            },
+            {
+              model: models.Shop,
+              as: "managed_shop",
+              include: {
+                model: models.Balance,
+                as: "balance",
+              },
+            },
+          ],
+        })
+      );
+    }
+    throw new Error(constants.NOT_AUTHORIZED);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
