@@ -113,4 +113,9 @@ router.get(
   ProductController.myWishlists
 );
 router.get("/me", authMiddleware([PermissionEnum.CUSTOMER]), UserController.me);
+router.put(
+  "/users/:id",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  UserController.update
+);
 export default router;

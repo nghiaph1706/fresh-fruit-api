@@ -5,6 +5,7 @@ import { models } from "../models/index.js";
 import MailService from "../services/MailService.js";
 import * as AuthService from "../services/AuthService.js";
 import PermissionEnum from "../config/enum/Permission.js";
+import * as UserRepository from "../repositories/UserRepository.js";
 
 const { User, PasswordReset } = models;
 
@@ -236,6 +237,27 @@ export const me = async (req, res) => {
           ],
         })
       );
+    }
+    throw new Error(constants.NOT_AUTHORIZED);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    let user = await User.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+    if (user) {
+      if (req.isSuperAdmin) {
+        return res.send(await await UserRepository.updateUser(req, user));
+      } else if (req.user.id == req.params.id) {
+        return res.send(await UserRepository.updateUser(req, user));
+      }
     }
     throw new Error(constants.NOT_AUTHORIZED);
   } catch (error) {
