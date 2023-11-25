@@ -77,6 +77,10 @@ export default function (sequelize, DataTypes) {
       foreignKey: "customer_id",
       as: "wallet",
     });
+    User.belongsTo(models.Shop, {
+      foreignKey: "shop_id",
+      as: "managed_shop",
+    });
   };
 
   return User;

@@ -112,4 +112,5 @@ router.get(
   authMiddleware([PermissionEnum.CUSTOMER]),
   ProductController.myWishlists
 );
+router.get("/me", authMiddleware([PermissionEnum.CUSTOMER]), UserController.me);
 export default router;
