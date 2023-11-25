@@ -75,6 +75,7 @@ router.post(
   authMiddleware([]),
   CheckoutController.verify
 );
+router.get("/orders", authMiddleware([]), OrderController.index);
 router.get("/orders/:slug", authMiddleware([]), OrderController.show);
 router.post("/orders", authMiddleware([]), OrderController.store);
 

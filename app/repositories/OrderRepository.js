@@ -20,6 +20,63 @@ const {
   Coupon,
 } = models;
 
+export const fetchOrders = async (req, res) => {
+  const user = req.user || null;
+  const permissions = req.permissions;
+  const hasPermission = await AuthService.hasPermission(
+    user,
+    req.params.shop_id
+  );
+  if (
+    user &&
+    permissions.includes(Permission.SUPER_ADMIN) &&
+    req.params.shop_id
+  ) {
+    return await Order.findAll({
+      where: {
+        parent_id: null,
+      },
+      include: [
+        {
+          association: "children",
+          as: "children",
+          include: [{ model: Shop, as: "shop" }],
+        },
+      ],
+    });
+  } else if (hasPermission) {
+    return await Order.findAll({
+      where: {
+        parent_id: null,
+        shop_id: req.params.shop_id,
+      },
+      include: [
+        {
+          association: "children",
+          as: "children",
+          include: [{ model: Shop, as: "shop" }],
+        },
+      ],
+    });
+  } else {
+    return await Order.findAll({
+      where: {
+        // TODO receheck condition
+        // parent_id: {
+          // [Op.ne]: null, // Using Op.ne for "not equal"
+        // },
+        customer_id: user.id,
+      },
+      include: [
+        {
+          association: "children",
+          as: "children",
+          include: [{ model: Shop, as: "shop" }],
+        },
+      ],
+    });
+  }
+};
 export const fetchSingleOrder = async (req, res) => {
   const user = req.user || null;
   const language = req.query.language || constants.DEFAULT_LANGUAGE;
@@ -127,7 +184,6 @@ export const storeOrder = async (req, settings) => {
   } catch (e) {
     let user = null;
   }
-  console.log(req.body.products);
   req.body.amount = await CalculatePaymentService.calculateSubtotal(
     req.body.products
   );
