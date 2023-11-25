@@ -37,6 +37,7 @@ import TaxModel from "./tax_classes.js";
 import WishlistModel from "./wishlists.js";
 import WalletPointModel from "./order_wallet_points.js";
 import PaymentIntentModel from "./payment_intents.js";
+import AddressModel from "./address.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -92,6 +93,7 @@ const models = {
   Wishlist: WishlistModel(sequelize, Sequelize.DataTypes),
   WalletPoint: WalletPointModel(sequelize, Sequelize.DataTypes),
   PaymentIntent: PaymentIntentModel(sequelize, Sequelize.DataTypes),
+  Address: AddressModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 

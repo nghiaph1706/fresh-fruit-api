@@ -81,6 +81,10 @@ export default function (sequelize, DataTypes) {
       foreignKey: "shop_id",
       as: "managed_shop",
     });
+    User.hasMany(models.Address, {
+      foreignKey: "customer_id",
+      as: "address",
+    });
   };
 
   return User;

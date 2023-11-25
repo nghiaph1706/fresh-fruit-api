@@ -2,6 +2,7 @@ import * as AuthService from "../services/AuthService.js";
 import jwt from "jsonwebtoken";
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
+import PermissionEnum from "../config/enum/Permission.js";
 
 const { PersonalAccessToken } = models;
 
@@ -36,6 +37,7 @@ export const authMiddleware = (roles) => {
       }
 
       req.permissions = permissions;
+      req.isSuperAdmin = req.permissions.includes(PermissionEnum.SUPER_ADMIN);
       return next();
     } catch (error) {
       // Handle the error appropriately
