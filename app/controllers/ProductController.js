@@ -130,7 +130,7 @@ export const show = async (req, res) => {
       language
     );
 
-    res.json({ product, relatedProducts });
+    res.json({ related_products: relatedProducts, ...product.dataValues });
   } catch (error) {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
