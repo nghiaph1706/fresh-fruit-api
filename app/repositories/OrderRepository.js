@@ -18,6 +18,7 @@ const {
   Wallet,
   User,
   Coupon,
+  OrderProduct,
 } = models;
 
 export const fetchOrders = async (req, res) => {
@@ -32,6 +33,7 @@ export const fetchOrders = async (req, res) => {
     permissions.includes(Permission.SUPER_ADMIN) &&
     req.params.shop_id
   ) {
+    console.log(1);
     return await Order.findAll({
       where: {
         parent_id: null,
@@ -45,6 +47,7 @@ export const fetchOrders = async (req, res) => {
       ],
     });
   } else if (hasPermission) {
+    console.log(2);
     return await Order.findAll({
       where: {
         parent_id: null,
@@ -59,11 +62,12 @@ export const fetchOrders = async (req, res) => {
       ],
     });
   } else {
+    console.log(3);
     return await Order.findAll({
       where: {
         // TODO receheck condition
         // parent_id: {
-          // [Op.ne]: null, // Using Op.ne for "not equal"
+        // [Op.ne]: null, // Using Op.ne for "not equal"
         // },
         customer_id: user.id,
       },
@@ -89,7 +93,14 @@ export const fetchSingleOrder = async (req, res) => {
         [Op.or]: [{ id: orderParam }, { tracking_number: orderParam }],
       },
       include: [
-        { model: Product, as: "products" },
+        {
+          model: Product,
+          as: "products",
+          include: {
+            model: models.OrderProduct,
+            as: "pivot",
+          },
+        },
         {
           association: "children",
           as: "children",
@@ -130,6 +141,7 @@ export const fetchSingleOrder = async (req, res) => {
       throw new Error(constants.NOT_AUTHORIZED);
     }
   } catch (error) {
+    console.log(error);
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 };
@@ -383,12 +395,12 @@ const createOrder = async (request) => {
 
     const products = request.body.products;
     products.forEach(async (product) => {
-      await order.addProducts(product.id, {
-        through: {
-          order_quantity: product.order_quantity,
-          unit_price: product.unit_price,
-          subtotal: product.subtotal,
-        },
+      await OrderProduct.create({
+        orderId: order.id,
+        productId: product.product_id,
+        order_quantity: product.order_quantity,
+        unit_price: product.unit_price,
+        subtotal: product.subtotal,
       });
     });
 
