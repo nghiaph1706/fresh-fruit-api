@@ -76,6 +76,7 @@ router.post(
   CheckoutController.verify
 );
 router.get("/orders/:slug", authMiddleware([]), OrderController.show);
+router.post("/orders", authMiddleware([]), OrderController.store);
 
 /**
  * ******************************************
