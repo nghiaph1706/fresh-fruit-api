@@ -4,7 +4,6 @@ import { models } from "../models/index.js";
 const { Variation, Product, Shop, WalletPoint } = models;
 
 export const calculateSubtotal = async (cartItems) => {
-    console.log(cartItems);
   if (cartItems.length == 0) {
     throw new Error("Cart items not found");
   }

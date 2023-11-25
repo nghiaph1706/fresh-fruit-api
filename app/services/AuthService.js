@@ -74,7 +74,6 @@ export const destroyAccessToken = async (token) => {
 };
 
 export const hasPermission = async (user, shopId = null) => {
-  console.log(user);
   const permissions = await user.getPermissions();
   if (user && permissions.includes(PersonalAccessToken.SUPER_ADMIN)) {
     return true;
