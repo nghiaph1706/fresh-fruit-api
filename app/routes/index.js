@@ -126,4 +126,24 @@ router.post(
   authMiddleware([PermissionEnum.CUSTOMER]),
   ReviewController.store
 );
+router.get(
+  "/followed-shops-popular-products",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  ShopController.followedShopsPopularProducts
+);
+router.get(
+  "/followed-shops",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  ShopController.userFollowedShops
+);
+router.get(
+  "/follow-shop",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  ShopController.userFollowedShop
+);
+router.post(
+  "/follow-shop",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  ShopController.handleFollowShop
+);
 export default router;

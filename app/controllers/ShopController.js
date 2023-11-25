@@ -3,7 +3,7 @@ import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import PermissionEnum from "../config/enum/Permission.js";
 
-const { Shop, User, UserProfile, Balance } = models;
+const { Shop, User, UserProfile, Balance, Product } = models;
 
 export const index = async (req, res) => {
   const shops = await Shop.findAll({
@@ -99,4 +99,87 @@ export const show = async (req, res) => {
   }
 
   res.send(shop);
+};
+
+export const followedShopsPopularProducts = async (req, res) => {
+  try {
+    const user = req.user;
+    const userShops = await user.getShops();
+    const followedShopIds = userShops.map((shop) => shop.id);
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+
+    const products = await Product.findAll({
+      attributes: {
+        include: [
+          [
+            literal(`(
+              SELECT COUNT(*)
+              FROM order_product
+              WHERE order_product.product_id = products.id
+            )`),
+            "ordersCount",
+          ],
+        ],
+      },
+      include: [{ model: Shop, as: "shop" }],
+      where: { shop_id: { [Op.in]: followedShopIds } },
+      order: [["ordersCount", "DESC"]],
+      limit,
+    });
+
+    return res.send(products);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
+};
+
+export const userFollowedShops = async (req, res) => {
+  try {
+    const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+    const user = req.user;
+
+    const shops = await user.getShops({ limit });
+
+    return res.send(shops);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
+};
+
+export const userFollowedShop = async (req, res) => {
+  try {
+    const user = req.user;
+    const userShops = await user.getShops();
+    const followedShopIds = userShops.map((shop) => shop.id);
+
+    const shop_id = parseInt(req.query.shop_id);
+
+    return res.send(followedShopIds.includes(shop_id));
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
+};
+
+export const handleFollowShop = async (req, res) => {
+  try {
+    const user = req.user;
+    const userShops = await user.getShops();
+    const followedShopIds = userShops.map((shop) => shop.id);
+
+    const shop_id = parseInt(req.query.shop_id);
+
+    if (followedShopIds.includes(shop_id)) {
+      await user.removeShop(shop_id);
+      return res.send(false);
+    } else {
+      await user.addShop(shop_id);
+      return res.send(true);
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
 };
