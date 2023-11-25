@@ -2,7 +2,7 @@ import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import { Op } from "sequelize";
 
-const { Type, Category, Product } = models;
+const { Type, Category, Product, Wishlist } = models;
 
 export const fetchRelated = async (
   slug,
@@ -24,7 +24,7 @@ export const fetchRelated = async (
           model: Category,
           where: {
             id: {
-              [Op.in]: categories
+              [Op.in]: categories,
             },
           },
           as: "categories",
@@ -33,7 +33,7 @@ export const fetchRelated = async (
           model: Type,
         },
       ],
-      limit: limit
+      limit: limit,
     });
 
     return relatedProducts;
@@ -41,4 +41,22 @@ export const fetchRelated = async (
     throw new Error(error);
     return [];
   }
+};
+
+export const fetchWishlists = async (req) => {
+  const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+  const wishlist = await Wishlist.findAll({
+    where: {
+      user_id: req.user.id,
+    },
+    attributes: ["product_id"],
+  });
+  const productIds = wishlist.map((item) => item.product_id);
+  const products = await Product.findAll({
+    where: {
+      id: productIds,
+    },
+    limit,
+  });
+  return products;
 };
