@@ -1,6 +1,7 @@
 // routes/index.js
 import express from "express";
 import PermissionEnum from "../config/enum/Permission.js";
+import * as AbusiveReportController from "../controllers/AbusiveReportController.js";
 import * as AttributeController from "../controllers/AttributeController.js";
 import * as AuthorController from "../controllers/AuthorController.js";
 import * as CategoryController from "../controllers/CategoryController.js";
@@ -10,6 +11,7 @@ import * as DeliveryTimeController from "../controllers/DeliveryTimeController.j
 import * as FeedbackController from "../controllers/FeedbackController.js";
 import * as LanguageController from "../controllers/LanguageController.js";
 import * as ManufacturerController from "../controllers/ManufacturerController.js";
+import * as OrderController from "../controllers/OrderController.js";
 import * as ProductController from "../controllers/ProductController.js";
 import * as QuestionController from "../controllers/QuestionController.js";
 import * as ResourceController from "../controllers/ResourceController.js";
@@ -21,7 +23,6 @@ import * as TagController from "../controllers/TagController.js";
 import * as TypeController from "../controllers/TypeController.js";
 import * as UserController from "../controllers/UserController.js";
 import * as WishlistController from "../controllers/WishlistController.js";
-import * as OrderController from "../controllers/OrderController.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
 const router = express.Router();
@@ -155,5 +156,10 @@ router.post(
   "/feedbacks",
   authMiddleware([PermissionEnum.CUSTOMER]),
   FeedbackController.store
+);
+router.post(
+  "/abusive_reports",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  AbusiveReportController.store
 );
 export default router;

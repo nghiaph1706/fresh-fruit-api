@@ -64,6 +64,6 @@ export const store = async (req, res) => {
       }
     }
   } catch (error) {
-    throw new Error(constants.SOMETHING_WENT_WRONG);
+    res.status(400).json({ message: constants.SOMETHING_WENT_WRONG });
   }
 };
