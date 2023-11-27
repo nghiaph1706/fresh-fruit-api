@@ -38,6 +38,7 @@ import WishlistModel from "./wishlists.js";
 import WalletPointModel from "./order_wallet_points.js";
 import PaymentIntentModel from "./payment_intents.js";
 import AddressModel from "./address.js";
+import AbusiveReportModel from "./abusive_reports.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -94,6 +95,7 @@ const models = {
   WalletPoint: WalletPointModel(sequelize, Sequelize.DataTypes),
   PaymentIntent: PaymentIntentModel(sequelize, Sequelize.DataTypes),
   Address: AddressModel(sequelize, Sequelize.DataTypes),
+  AbusiveReport: AbusiveReportModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
 };
 
