@@ -29,3 +29,41 @@ export const show = async (req, res) => {
 
   res.json({ data: feedback });
 };
+
+export const store = async (req, res) => {
+  try {
+    const model_id = req.body.model_id;
+    const model_type = req.body.model_type;
+    const user_id = req.user.id;
+    const feedback = await Feedback.findOne({
+      where: {
+        model_id,
+        model_type,
+        user_id,
+      },
+    });
+
+    if (!feedback) {
+      req.body.user_id = user_id;
+      const feedback = await Feedback.create(req.body);
+      return res.json({ data: feedback });
+    } else {
+      const positive = feedback.positive;
+      const negative = feedback.negative;
+      if (req.body.positive && positive == null && negative == true) {
+        await feedback.update({
+          positive: true,
+          negative: null,
+        });
+      }
+      if (req.body.negative && positive == true && negative == null) {
+        await feedback.update({
+          positive: null,
+          negative: true,
+        });
+      }
+    }
+  } catch (error) {
+    throw new Error(constants.SOMETHING_WENT_WRONG);
+  }
+};
