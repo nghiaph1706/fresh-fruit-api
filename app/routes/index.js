@@ -151,4 +151,9 @@ router.post(
   authMiddleware([PermissionEnum.CUSTOMER]),
   QuestionController.store
 );
+router.post(
+  "/feedbacks",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  FeedbackController.store
+);
 export default router;
