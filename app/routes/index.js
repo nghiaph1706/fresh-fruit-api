@@ -146,4 +146,9 @@ router.post(
   authMiddleware([PermissionEnum.CUSTOMER]),
   ShopController.handleFollowShop
 );
+router.post(
+  "/questions",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  QuestionController.store
+);
 export default router;
