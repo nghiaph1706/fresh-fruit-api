@@ -70,5 +70,16 @@ export default function (sequelize, DataTypes) {
     }
   );
 
+  Question.associate = (models) => {
+    Question.belongsTo(models.Product, {
+      foreignKey: "product_id",
+      as: "product",
+    });
+    Question.belongsTo(models.User, {
+      foreignKey: "user_id",
+      as: "user",
+    });
+  };
+
   return Question;
 }
