@@ -83,3 +83,16 @@ export const store = async (req, res) => {
     return res.status(400).json({ message: constants.BAD_REQUEST });
   }
 };
+
+export const myQuestions = async (req, res) => {
+  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+
+  const questions = await Question.findAll({
+    where: {
+      user_id: req.user.id,
+    },
+    limit: limit,
+  });
+
+  return res.json({ data: questions });
+};
