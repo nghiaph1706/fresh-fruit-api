@@ -147,6 +147,11 @@ router.post(
   authMiddleware([PermissionEnum.CUSTOMER]),
   ShopController.handleFollowShop
 );
+router.get(
+  "/my-questions",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  QuestionController.myQuestions
+);
 router.post(
   "/questions",
   authMiddleware([PermissionEnum.CUSTOMER]),
