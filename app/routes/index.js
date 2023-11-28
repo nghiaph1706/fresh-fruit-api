@@ -2,6 +2,7 @@
 import express from "express";
 import PermissionEnum from "../config/enum/Permission.js";
 import * as AbusiveReportController from "../controllers/AbusiveReportController.js";
+import * as AddressController from "../controllers/AddressController.js";
 import * as AttributeController from "../controllers/AttributeController.js";
 import * as AuthorController from "../controllers/AuthorController.js";
 import * as CategoryController from "../controllers/CategoryController.js";
@@ -181,5 +182,10 @@ router.post(
   "/update-contact",
   authMiddleware([PermissionEnum.CUSTOMER]),
   UserController.updateContact
+);
+router.delete(
+  "/address/:id",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  AddressController.destroy
 );
 export default router;
