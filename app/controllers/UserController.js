@@ -266,3 +266,40 @@ export const update = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const updateContact = async (req, res) => {
+  try {
+    const phoneNumber = req.body.phone_number;
+    const user_id = req.body.user_id;
+    // TODO: Verify OTP
+    // if (await UserRepository.verifyOtp(req)) {
+    // Create or update user profile
+    const userProfile = await models.UserProfile.findOne({
+      where: {
+        customer_id: user_id,
+      },
+    });
+    if (userProfile) {
+      await userProfile.update({
+        contact: phoneNumber,
+      });
+    } else {
+      await models.UserProfile.create({
+        contact: phoneNumber,
+        customer_id: user_id,
+      });
+    }
+    return res.json({
+      message: constants.CONTACT_UPDATE_SUCCESSFUL,
+      success: true,
+    });
+    // }
+    // return res.json({
+    //   message: constants.CONTACT_UPDATE_FAILED,
+    //   success: false,
+    // });
+  } catch (error) {
+    console.error(error);
+    res.status(422).json({ error: constants.INVALID_GATEWAY });
+  }
+};

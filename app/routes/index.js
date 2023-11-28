@@ -177,4 +177,9 @@ router.get(
   authMiddleware([PermissionEnum.CUSTOMER]),
   AbusiveReportController.myReports
 );
+router.post(
+  "/update-contact",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  UserController.updateContact
+);
 export default router;
