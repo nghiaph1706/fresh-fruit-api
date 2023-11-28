@@ -172,4 +172,9 @@ router.post(
   authMiddleware([PermissionEnum.CUSTOMER]),
   AbusiveReportController.store
 );
+router.get(
+  "/my-reports",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  AbusiveReportController.myReports
+);
 export default router;
