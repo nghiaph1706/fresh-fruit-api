@@ -29,3 +29,14 @@ export const store = async (req, res) => {
     res.status(400).json({ message: constants.SOMETHING_WENT_WRONG });
   }
 };
+
+export const myReports = async (req, res) => {
+  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+  const abusiveReports = await AbusiveReport.findAll({
+    where: {
+      user_id: req.user.id,
+    },
+    limit,
+  });
+  return res.send(abusiveReports);
+};
