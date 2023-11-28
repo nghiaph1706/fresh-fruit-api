@@ -1,6 +1,6 @@
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
-
+import * as ReviewRepository from "../repositories/ReviewRepository.js";
 const { Review, Order, Product } = models;
 
 export const index = async (req, res) => {
@@ -85,5 +85,14 @@ export const store = async (req, res) => {
     return res
       .status(400)
       .json({ message: constants.ALREADY_GIVEN_REVIEW_FOR_THIS_PRODUCT });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    const review = await ReviewRepository.updateReview(req, req.params.id);
+    return res.json({ data: review });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
   }
 };
