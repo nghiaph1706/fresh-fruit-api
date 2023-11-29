@@ -91,13 +91,15 @@ export default function (sequelize, DataTypes) {
       through: models.CategoryProduct,
       sourceKey: "id",
     });
-    Category.belongsTo(models.Category, {
+    Category.hasOne(models.Category, {
       as: "parent",
       foreignKey: "parent_id",
+      sourceKey: "id",
     });
     Category.hasMany(models.Category, {
       as: "children",
       foreignKey: "parent_id",
+      sourceKey: "id",
     });
   };
 

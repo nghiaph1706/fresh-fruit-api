@@ -12,30 +12,34 @@ export const index = async (req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
 
   let categories;
-  if (parent) {
+
+  const baseQuery = {
+    where: {
+      language,
+    },
+    include: [
+      { model: Type, as: "type" },
+      { association: "parent", as: "parent" },
+      { association: "children", as: "children" },
+    ],
+    limit: limit,
+  };
+
+  if (parent === "null") {
+    console.log("parent is null");
     categories = await Category.findAll({
+      ...baseQuery,
       where: {
-        language,
+        ...baseQuery.where,
+        parent_id: {
+          [Op.eq]: null,
+        },
       },
-      limit: limit,
     });
   } else {
-    categories = await Category.findAll({
-      where: {
-        language,
-      },
-      include: [
-        {
-          model: Type,
-          as: "type",
-        },
-        { association: "parent", as: "parent" },
-        { association: "children", as: "children" },
-      ],
-      limit: limit,
-    });
+    categories = await Category.findAll(baseQuery);
   }
-
+  // TODO fix this
   return res.json({ data: categories });
 };
 
