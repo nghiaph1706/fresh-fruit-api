@@ -4,6 +4,7 @@ import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import * as AvailabilityRepository from "../repositories/AvailabilityRepository.js";
 import * as ProductRepository from "../repositories/ProductRepository.js";
+import * as AuthService from "../services/AuthService.js";
 
 const { Type, Shop, Product } = models;
 
@@ -139,7 +140,46 @@ export const show = async (req, res) => {
 export const myWishlists = async (req, res) => {
   try {
     const products = await ProductRepository.fetchWishlists(req);
-    res.json({data: products});
+    res.json({ data: products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const store = async (req, res) => {
+  try {
+    const hasPermission = await AuthService.hasPermission(
+      req.user,
+      req.params.shop_id
+    );
+    if (hasPermission) {
+      const product = await ProductRepository.storeProduct(req);
+      res.send(product);
+    } else {
+      res.status(401).json({ message: constants.NOT_AUTHORIZED });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    const product = await ProductRepository.updateProduct(req);
+    res.send(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const destroy = async (req, res) => {
+  try {
+    const product = await Product.findByPk(req.params.id);
+    await product.destroy();
+    res.send(product);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

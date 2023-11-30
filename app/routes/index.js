@@ -210,4 +210,24 @@ router.delete(
   CategoryController.destroy
 );
 
+/**
+ * ******************************************
+ * Authorized Route for Staff & Store Owner
+ * ******************************************
+ */
+router.post(
+  "/products",
+  authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
+  ProductController.store
+);
+router.put(
+  "/products/:id",
+  authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
+  ProductController.update
+);
+router.delete(
+  "/products/:id",
+  authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
+  ProductController.destroy
+);
 export default router;
