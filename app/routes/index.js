@@ -188,4 +188,26 @@ router.delete(
   authMiddleware([PermissionEnum.CUSTOMER]),
   AddressController.destroy
 );
+
+/**
+ * *****************************************
+ * Authorized Route for Super Admin only
+ * *****************************************
+ */
+router.post(
+  "/categories",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  CategoryController.store
+);
+router.put(
+  "/categories/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  CategoryController.update
+);
+router.delete(
+  "/categories/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  CategoryController.destroy
+);
+
 export default router;
