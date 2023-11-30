@@ -33,7 +33,7 @@ export default function (sequelize, DataTypes) {
         comment: "null",
       },
       image: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
