@@ -189,4 +189,41 @@ router.delete(
   authMiddleware([PermissionEnum.CUSTOMER]),
   AddressController.destroy
 );
+router.get(
+  "/refunds",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  RefundsController.index
+)
+router.get(
+  "/refunds/:slug",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  RefundsController.show
+)
+router.post(
+  "/refunds",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  RefundsController.store
+)
+
+/**
+ * *****************************************
+ * Authorized Route for Super Admin only
+ * *****************************************
+ */
+router.post(
+  "/categories",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  CategoryController.store
+);
+router.put(
+  "/categories/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  CategoryController.update
+);
+router.delete(
+  "/categories/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  CategoryController.destroy
+);
+
 export default router;
