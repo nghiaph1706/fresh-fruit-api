@@ -189,21 +189,4 @@ router.delete(
   authMiddleware([PermissionEnum.CUSTOMER]),
   AddressController.destroy
 );
-router.get(
-  "/refunds",
-  authMiddleware([PermissionEnum.CUSTOMER,PermissionEnum.SUPER_ADMIN,PermissionEnum.STORE_OWNER]),
-  RefundsController.index
-)
-router.get(
-  "/refunds/:slug",
-  authMiddleware([PermissionEnum.CUSTOMER]),
-  RefundsController.show
-)
-router.post(
-  "/refunds",
-  authMiddleware([PermissionEnum.CUSTOMER]),
-  RefundsController.store
-)
-
-
 export default router;

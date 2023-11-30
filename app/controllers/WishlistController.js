@@ -54,7 +54,7 @@ export const destroy = async (req, res) => {
     }
     const wishlist = await Wishlist.findOne({
       where: {
-        id: req.params.id,
+        product_id: req.params.id,
         user_id: req.user.id,
       },
     });

@@ -62,7 +62,7 @@ export const register = async (req, res) => {
       await user.getPermissions()
     );
     await new MailService().sendResetPassword(user);
-    return res.json({ token, permissionNames });
+    return res.json({ token, permissions: permissionNames });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
