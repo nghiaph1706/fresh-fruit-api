@@ -36,7 +36,7 @@ export const index = async (req, res) => {
         },
         limit: limit,
       });
-      return res.status(200).send(results);
+      return res.status(200).send({ data: results });
     } else if (hasPermission(req.permissions, req.user, query.shop_id)) {
       const results = await Refund.findAll({
         include: [
@@ -55,7 +55,7 @@ export const index = async (req, res) => {
         },
         limit: limit,
       });
-      return res.status(200).send(results);
+      return res.status(200).send({ data: results });
     } else if (req.user && req.permissions.include(PermissionEnum.CUSTOMER)) {
       const results = await Refund.findAll({
         include: [
