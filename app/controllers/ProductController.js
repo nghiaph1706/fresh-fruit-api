@@ -5,8 +5,9 @@ import { models } from "../models/index.js";
 import * as AvailabilityRepository from "../repositories/AvailabilityRepository.js";
 import * as ProductRepository from "../repositories/ProductRepository.js";
 import * as AuthService from "../services/AuthService.js";
+import * as UtilService from "../services/UtilServcie.js";
 
-const { Type, Shop, Product } = models;
+const { Type, Shop, Product, Category } = models;
 
 export const popularProducts = async (req, res) => {
   try {
@@ -77,27 +78,56 @@ export const popularProducts = async (req, res) => {
 };
 
 export const index = async (req, res) => {
-  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-  const unavailableProducts = [];
-  const language = req.query.language
-    ? req.query.language
-    : constants.DEFAULT_LANGUAGE;
+  const limit = parseInt(req.query.limit) || 15;
+  const search = UtilService.convertToObject(req.query.search);
+  let unavailableProducts = [];
+  const language = req.query.language || constants.DEFAULT_LANGUAGE;
+
   if (req.query.date_range) {
-    const dateRange = req.body.date_range.split("//");
+    const dateRange = req.query.date_range.split("//");
     unavailableProducts = AvailabilityRepository.getUnavailableProducts(
       dateRange[0],
       dateRange[1]
     );
   }
-  const products = await Product.findAll({
+
+  const include = [];
+  let baseQuery = {
     where: {
-      language: language,
+      language,
       id: {
         [Op.notIn]: unavailableProducts,
       },
     },
-    limit: limit,
-  });
+    include,
+    limit,
+  };
+
+  if (!search.name) {
+    if (search.type?.slug) {
+      include.push({
+        model: Type,
+        where: {
+          slug: search.type.slug,
+        },
+      });
+    }
+
+    if (search.categories?.slug) {
+      include.push({
+        model: Category,
+        where: {
+          slug: search.categories.slug,
+        },
+      });
+    }
+  } else {
+    baseQuery.where.name = {
+      [Op.like]: `%${search.name}%`,
+    };
+  }
+
+  const products = await Product.findAll(baseQuery);
 
   return res.json({ data: products });
 };
