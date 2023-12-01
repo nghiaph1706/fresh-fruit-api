@@ -28,59 +28,49 @@ export const fetchOrders = async (req, res) => {
     user,
     req.params.shop_id
   );
+
+  let ordersQuery = {
+    where: {},
+    include: [
+      {
+        association: "children",
+        as: "children",
+        include: [
+          { model: Shop, as: "shop" },
+          { model: Product, as: "products" },
+        ],
+      },
+      {
+        model: Product,
+        as: "products", // Include associated products for each order
+        through: {
+          model: models.OrderProduct,
+          as: "pivot",
+        },
+      },
+    ],
+  };
+
   if (
     user &&
     permissions.includes(Permission.SUPER_ADMIN) &&
     req.params.shop_id
   ) {
     console.log(1);
-    return await Order.findAll({
-      where: {
-        parent_id: null,
-      },
-      include: [
-        {
-          association: "children",
-          as: "children",
-          include: [{ model: Shop, as: "shop" }],
-        },
-      ],
-    });
+    ordersQuery.where.parent_id = null;
   } else if (hasPermission) {
     console.log(2);
-    return await Order.findAll({
-      where: {
-        parent_id: null,
-        shop_id: req.params.shop_id,
-      },
-      include: [
-        {
-          association: "children",
-          as: "children",
-          include: [{ model: Shop, as: "shop" }],
-        },
-      ],
-    });
+    ordersQuery.where.parent_id = null;
+    ordersQuery.where.shop_id = req.params.shop_id;
   } else {
     console.log(3);
-    return await Order.findAll({
-      where: {
-        // TODO receheck condition
-        // parent_id: {
-        // [Op.ne]: null, // Using Op.ne for "not equal"
-        // },
-        customer_id: user.id,
-      },
-      include: [
-        {
-          association: "children",
-          as: "children",
-          include: [{ model: Shop, as: "shop" }],
-        },
-      ],
-    });
+    ordersQuery.where.customer_id = user?.id;
+    ordersQuery.where.parent_id = { [Op.ne]: null };
   }
+
+  return await Order.findAll(ordersQuery);
 };
+
 export const fetchSingleOrder = async (req, res) => {
   const user = req.user || null;
   const language = req.query.language || constants.DEFAULT_LANGUAGE;
@@ -95,8 +85,8 @@ export const fetchSingleOrder = async (req, res) => {
       include: [
         {
           model: Product,
-          as: "products",
-          include: {
+          as: "products", // Include associated products for each order
+          through: {
             model: models.OrderProduct,
             as: "pivot",
           },
