@@ -23,7 +23,7 @@ export const storeRefund = async (req) => {
     if (order.parent != null) {
       throw new Error(constants.REFUND_ONLY_ALLOWED_FOR_MAIN_ORDER);
     }
-    if (req.user.id != order.customer_id) {
+    if (req.user.id != order.customer_id || req.isSuperAdmin) {
       throw new Error(constants.NOT_AUTHORIZED);
     }
     let data = body;

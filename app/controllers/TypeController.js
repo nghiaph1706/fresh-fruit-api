@@ -1,6 +1,7 @@
-import { Op } from "sequelize";
-import constants from "../config/constants.js";
-import { models } from "../models/index.js";
+import { Op } from 'sequelize';
+import constants from '../config/constants.js';
+import { models } from '../models/index.js';
+import * as TypeRepository from '../repositories/TypeRepository.js';
 
 const { Banner, Type } = models;
 
@@ -15,7 +16,12 @@ export const index = async (req, res) => {
     },
   });
 
-  return res.send(types);
+  const ordersWithTranslatedLanguages = types.map((order) => ({
+    ...order.toJSON(),
+    translated_languages: ['vi'],
+  }));
+
+  return res.send(ordersWithTranslatedLanguages);
 };
 
 export const show = async (req, res) => {
@@ -26,7 +32,7 @@ export const show = async (req, res) => {
 
   if (!isNaN(slug)) {
     type = await Type.findByPk(slug, {
-      include: [{ model: Banner, as: "banners" }],
+      include: [{ model: Banner, as: 'banners' }],
     });
   } else {
     type = await Type.findOne({
@@ -34,7 +40,7 @@ export const show = async (req, res) => {
         language,
         slug,
       },
-      include: [{ model: Banner, as: "banners" }],
+      include: [{ model: Banner, as: 'banners' }],
     });
   }
 
@@ -43,4 +49,44 @@ export const show = async (req, res) => {
   }
 
   res.send(type);
+};
+
+export const store = async (req, res) => {
+  try {
+    const result = await TypeRepository.storeType(req);
+    return res.status(201).send(result);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    const result = await TypeRepository.updateType(req);
+    return res.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const destroy = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const type = await Type.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!type) {
+      return res.status(404).json({ message: constants.NOT_FOUND });
+    }
+    type.translate_languages = ['vi'];
+    await type.destroy();
+
+    res.send({
+      type,
+      translate_languages: ['vi'],
+    });
+  } catch (error) {}
 };

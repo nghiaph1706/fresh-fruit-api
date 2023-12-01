@@ -2,60 +2,60 @@
 
 export default function (sequelize, DataTypes) {
   const Banner = sequelize.define(
-    "banners",
+    'banners',
     {
       id: {
         type: DataTypes.BIGINT,
         allowNull: false,
         primaryKey: true,
-        comment: "null",
+        comment: 'null',
         autoIncrement: true,
       },
       type_id: {
         type: DataTypes.BIGINT,
         allowNull: false,
-        comment: "null",
+        comment: 'null',
         references: {
-          model: "types",
-          key: "id",
+          model: 'types',
+          key: 'id',
         },
       },
       title: {
         type: DataTypes.TEXT,
         allowNull: false,
-        comment: "null",
+        comment: 'null',
       },
       description: {
         type: DataTypes.TEXT,
         allowNull: true,
-        comment: "null",
+        comment: 'null',
       },
       image: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
-        comment: "null",
+        comment: 'null',
       },
       created_at: {
         type: DataTypes.DATE,
         allowNull: true,
-        comment: "null",
+        comment: 'null',
       },
       updated_at: {
         type: DataTypes.DATE,
         allowNull: true,
-        comment: "null",
+        comment: 'null',
       },
     },
     {
-      tableName: "banners",
+      tableName: 'banners',
       timestamps: true,
-      createdAt: "created_at",
-      updatedAt: "updated_at",
-    }
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+    },
   );
 
   Banner.associate = (models) => {
-    Banner.belongsTo(models.Type, { foreignKey: "type_id", as: "type" });
+    Banner.belongsTo(models.Type, { foreignKey: 'type_id', as: 'type' });
   };
 
   return Banner;
