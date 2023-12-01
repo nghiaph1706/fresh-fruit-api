@@ -19,8 +19,24 @@ export const index = async (req, res) => {
     },
     include: [
       { model: Type, as: "type" },
-      { association: "parent", as: "parent" },
-      { association: "children", as: "children" },
+      {
+        association: "parent",
+        as: "parent",
+        include: [
+          { model: Type, as: "type" },
+          { association: "parent", as: "parent" },
+          { association: "children", as: "children" },
+        ],
+      },
+      {
+        association: "children",
+        as: "children",
+        include: [
+          { model: Type, as: "type" },
+          { association: "parent", as: "parent" },
+          { association: "children", as: "children" },
+        ],
+      },
     ],
     limit: limit,
   };
