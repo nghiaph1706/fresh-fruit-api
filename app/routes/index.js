@@ -25,6 +25,7 @@ import * as TypeController from "../controllers/TypeController.js";
 import * as UserController from "../controllers/UserController.js";
 import * as WishlistController from "../controllers/WishlistController.js";
 import * as RefundsController from "../controllers/RefundController.js";
+import * as AnalyticsController from "../controllers/AnalyticsController.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
 const router = express.Router();
@@ -193,17 +194,31 @@ router.get(
   "/refunds",
   authMiddleware([PermissionEnum.CUSTOMER]),
   RefundsController.index
-)
+);
 router.get(
   "/refunds/:slug",
   authMiddleware([PermissionEnum.CUSTOMER]),
   RefundsController.show
-)
+);
 router.post(
   "/refunds",
   authMiddleware([PermissionEnum.CUSTOMER]),
   RefundsController.store
-)
+);
+
+/**
+ * ******************************************
+ * Authorized Route for Staff & Store Owner
+ * ******************************************
+ */
+router.get(
+  "/analytics",
+  authMiddleware([
+    PermissionEnum.STAFF,
+    PermissionEnum.STORE_OWNER,
+  ]),
+  AnalyticsController.analytics
+);
 
 /**
  * *****************************************

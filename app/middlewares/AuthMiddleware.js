@@ -38,6 +38,7 @@ export const authMiddleware = (roles) => {
 
       req.permissions = permissions;
       req.isSuperAdmin = req.permissions.includes(PermissionEnum.SUPER_ADMIN);
+      req.isStoreOwner = req.permissions.includes(PermissionEnum.STORE_OWNER);
       return next();
     } catch (error) {
       // Handle the error appropriately
