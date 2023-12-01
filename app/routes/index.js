@@ -24,6 +24,7 @@ import * as TagController from "../controllers/TagController.js";
 import * as TypeController from "../controllers/TypeController.js";
 import * as UserController from "../controllers/UserController.js";
 import * as WishlistController from "../controllers/WishlistController.js";
+import * as RefundsController from "../controllers/RefundController.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 
 const router = express.Router();
@@ -188,6 +189,21 @@ router.delete(
   authMiddleware([PermissionEnum.CUSTOMER]),
   AddressController.destroy
 );
+router.get(
+  "/refunds",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  RefundsController.index
+)
+router.get(
+  "/refunds/:slug",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  RefundsController.show
+)
+router.post(
+  "/refunds",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  RefundsController.store
+)
 
 /**
  * *****************************************

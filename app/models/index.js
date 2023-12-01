@@ -39,6 +39,7 @@ import WalletPointModel from "./order_wallet_points.js";
 import PaymentIntentModel from "./payment_intents.js";
 import AddressModel from "./address.js";
 import AbusiveReportModel from "./abusive_reports.js";
+import RefundModel from "./refunds.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -97,6 +98,7 @@ const models = {
   Address: AddressModel(sequelize, Sequelize.DataTypes),
   AbusiveReport: AbusiveReportModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
+  Refund : RefundModel(sequelize, Sequelize.DataTypes),
 };
 
 Object.values(models).forEach((model) => {
