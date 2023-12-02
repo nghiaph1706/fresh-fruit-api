@@ -1,18 +1,18 @@
-import constants from '../config/constants.js';
-import { models, sequelize } from '../models/index.js';
-import { customSlugify } from '../services/UtilServcie.js';
+import constants from "../config/constants.js";
+import { models, sequelize } from "../models/index.js";
+import { customSlugify } from "../services/UtilServcie.js";
 
 const { Banner, Type } = models;
 
 const dataArray = [
-  'name',
-  'slug',
-  'icon',
-  'promotional_sliders',
-  'settings',
-  'language',
+  "name",
+  "slug",
+  "icon",
+  "promotional_sliders",
+  "settings",
+  "language",
 ];
-const only = (body) => {
+export const only = (body, dataArray) => {
   const filterBody = Object.assign(
     {},
     ...dataArray.map((key) => ({ [key]: body[key] })),
@@ -24,7 +24,7 @@ export const storeType = async (req) => {
   console.log(req.body);
   const body = req.body;
   body.slug = customSlugify(body.name);
-  const filterBody = only(body);
+  const filterBody = only(body, dataArray);
   const t = await sequelize.transaction();
 
   try {
@@ -36,14 +36,13 @@ export const storeType = async (req) => {
           type_id: type.id,
         };
       });
-      console.log(bannersMap);
-      // await Banner.bulkCreate(bannersMap, { transaction: t });
+      await Banner.bulkCreate(bannersMap, { transaction: t });
       await t.commit();
     }
     console.log(type);
     return {
       type,
-      translate_languages: ['vi'],
+      translate_languages: ["vi"],
     };
   } catch (error) {
     console.log(error);
@@ -57,7 +56,7 @@ export const updateType = async (req) => {
   try {
     const ids = [];
     const type = await Type.findByPk(req.params.id, {
-      include: [{ model: Banner, as: 'banners' }],
+      include: [{ model: Banner, as: "banners" }],
       transaction: t,
     });
     if (!type) {
@@ -90,19 +89,19 @@ export const updateType = async (req) => {
         }
       });
     }
-    const typeFilter = only(req.body);
+    const typeFilter = only(req.body, dataArray);
     await Type.update(typeFilter, {
       where: { id: type.id },
       transaction: t,
     });
     const newtype = await Type.findByPk(req.params.id, {
-      include: [{ model: Banner, as: 'banners' }],
+      include: [{ model: Banner, as: "banners" }],
       transaction: t,
     });
     await t.commit();
     return {
       newtype,
-      translate_languages: ['vi'],
+      translate_languages: ["vi"],
     };
   } catch (error) {
     console.log(error);

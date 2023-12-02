@@ -96,3 +96,17 @@ export const update = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+export const destroy = async (req, res) => {
+  try {
+    const review = await Review.findByPk(req.params.id);
+    if (!review) {
+      res.status(404).send(constants.NOT_FOUND);
+    }
+    await review.destroy();
+    return res.status(200).send(review);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

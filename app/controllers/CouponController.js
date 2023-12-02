@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
+import { only } from "../repositories/TypeRepository.js";
 
 const { Coupon, Setting } = models;
 
@@ -41,7 +42,7 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({data: coupon });
+  res.json({ data: coupon });
 };
 
 export const verify = async (req, res) => {
@@ -84,6 +85,74 @@ export const verify = async (req, res) => {
         message: constants.INVALID_COUPON_CODE,
       });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const store = async (req, res) => {
+  const body = req.body;
+  try {
+    const result = await Coupon.create(body);
+    res.status(201).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const update = async (req, res) => {
+  req.body.id = parseInt(req.params.id);
+  return res.status(200).send(await updateCoupon(req.body));
+};
+
+export const updateCoupon = async (body) => {
+  const dataArray = [
+    "id",
+    "code",
+    "language",
+    "description",
+    "image",
+    "type",
+    "amount",
+    "minimum_cart_amount",
+    "active_from",
+    "expire_at",
+  ];
+  try {
+    const coupon = await Coupon.findByPk(body.id);
+    if (!coupon) {
+      throw new Error(constants.NOT_FOUND);
+    }
+    if (body.language && body.language === constants.DEFAULT_LANGUAGE) {
+      const updateCoupon = only(body, dataArray);
+      const nonTranslatableKeys = ["language", "image", "description", "id"];
+      nonTranslatableKeys.forEach((item) => {
+        if (updateCoupon[item]) {
+          delete updateCoupon[item];
+        }
+      });
+      await Coupon.update(updateCoupon, { where: { code: coupon.code } });
+    }
+    delete body.id;
+    Object.assign(coupon, body);
+    const result = await coupon.save();
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Internal Server Error");
+  }
+};
+
+export const destroy = async (req, res) => {
+  try {
+    const coupon = await Coupon.findByPk(req.params.id);
+    if (!coupon) {
+      res.status(404).json({ message: constants.NOT_FOUND });
+    }
+    await coupon.destroy();
+    res.status(200).send(coupon);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

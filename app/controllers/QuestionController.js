@@ -96,3 +96,17 @@ export const myQuestions = async (req, res) => {
 
   return res.json({ data: questions });
 };
+
+export const destroy = async (req, res) => {
+  try {
+    const question = await Question.findByPk(req.params.id);
+    if (!question) {
+      res.status(404).send(constants.NOT_FOUND);
+    }
+    await question.destroy();
+    return res.status(200).send(question);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
