@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
+import { customSlugify } from "../services/UtilServcie.js";
 
 const { Category, Type } = models;
 
@@ -55,6 +56,11 @@ export const index = async (req, res) => {
   } else {
     categories = await Category.findAll(baseQuery);
   }
+
+  // const cateWithTranslatedLanguages = categories.map((cate) => ({
+  //   ...cate.toJSON(),
+  //   translated_languages: ['vi'],
+  // }));
   // TODO fix this
   return res.json({ data: categories });
 };
@@ -96,14 +102,17 @@ export const show = async (req, res) => {
   if (!category) {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
-
-  res.send(category);
+  const cateWithTranslatedLanguages = {
+    ...category.toJSON(),
+    translated_languages: ["vi"],
+  };
+  res.send(cateWithTranslatedLanguages);
 };
 
 export const store = async (req, res) => {
-  const { name, slug, type_id, icon, image, details, language, parent } =
+  const { name, type_id, icon, image, details, language, parent } =
     req.body;
-
+  const slug = customSlugify(name);
   const category = await Category.create({
     name,
     slug,
@@ -120,7 +129,7 @@ export const store = async (req, res) => {
 
 export const update = async (req, res) => {
   const { id } = req.params;
-  const { name, slug, type_id, icon, image, details, language, parent } =
+  const { name, type_id, icon, image, details, language, parent } =
     req.body;
 
   const category = await Category.findOne({
@@ -134,14 +143,13 @@ export const update = async (req, res) => {
   }
 
   category.name = name;
-  category.slug = slug;
+  category.slug = customSlugify(name);
   category.type_id = type_id;
   category.icon = icon;
   category.image = image;
   category.details = details;
   category.language = language;
   category.parent_id = parent;
-
   await category.save();
 
   res.send(category);

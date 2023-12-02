@@ -16,9 +16,9 @@ export const index = async (req, res) => {
     },
   });
 
-  const typesWithTranslatedLanguages = types.map((order) => ({
-    ...order.toJSON(),
-    translated_languages: ["vi"],
+  const typesWithTranslatedLanguages = types.map((type) => ({
+    ...type.toJSON(),
+    translated_languages: ['vi'],
   }));
 
   return res.send(typesWithTranslatedLanguages);
@@ -86,7 +86,6 @@ export const destroy = async (req, res) => {
     if (!type) {
       return res.status(404).json({ message: constants.NOT_FOUND });
     }
-    type.translate_languages = ["vi"];
     await type.destroy();
 
     res.send({
