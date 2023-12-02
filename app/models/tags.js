@@ -33,7 +33,7 @@ export default function (sequelize, DataTypes) {
         comment: "null",
       },
       image: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
@@ -72,12 +72,12 @@ export default function (sequelize, DataTypes) {
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
-    }
+    },
   );
 
   Tag.associate = (models) => {
     Tag.belongsTo(models.Type, { foreignKey: "type_id", as: "type" });
   };
-  
+
   return Tag;
 }
