@@ -97,7 +97,7 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ data: category });
+  res.send(category);
 };
 
 export const store = async (req, res) => {
