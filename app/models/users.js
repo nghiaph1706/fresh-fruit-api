@@ -77,18 +77,18 @@ export default function (sequelize, DataTypes) {
       foreignKey: "customer_id",
       as: "wallet",
     });
-    User.belongsTo(models.Shop, {
-      foreignKey: "shop_id",
-      as: "managed_shop",
-    });
+    // User.belongsTo(models.Shop, {
+    //   foreignKey: "shop_id",
+    //   as: "managed_shop",
+    // });
     User.hasMany(models.Address, {
       foreignKey: "customer_id",
       as: "address",
     });
-    // User.hasMany(models.Shop, {
-    //   foreignKey: "owner_id",
-    //   as: "shops",
-    // });
+    User.hasMany(models.Shop, {
+      foreignKey: "owner_id",
+      as: "managed_shop",
+    });
   };
 
   return User;

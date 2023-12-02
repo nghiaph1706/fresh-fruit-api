@@ -272,4 +272,26 @@ router.delete(
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
   ProductController.destroy,
 );
+
+// ADD more
+router.get(
+  '/withdraws',
+  authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
+  StoreNoticeController.index,
+);
+router.get(
+  '/top-rate-product',
+  authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
+  ProductController.popularProducts,
+);
+router.get(
+  '/low-stock-products',
+  authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
+  ProductController.popularProducts,
+);
+router.get(
+  '/category-wise-product',
+  authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
+  StoreNoticeController.index,
+);
 export default router;
