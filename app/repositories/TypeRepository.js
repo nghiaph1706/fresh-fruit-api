@@ -39,7 +39,6 @@ export const storeType = async (req) => {
       await Banner.bulkCreate(bannersMap, { transaction: t });
       await t.commit();
     }
-    console.log(type);
     return {
       type,
       translate_languages: ["vi"],
@@ -89,8 +88,9 @@ export const updateType = async (req) => {
         }
       });
     }
-    const typeFilter = only(req.body, dataArray);
-    await Type.update(typeFilter, {
+    delete req.body.banners;
+    req.body.slug = customSlugify(req.body.name);
+    await Type.update(req.body, {
       where: { id: type.id },
       transaction: t,
     });

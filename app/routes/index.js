@@ -317,6 +317,21 @@ router.delete(
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
   QuestionController.destroy,
 );
+router.post(
+  "/attributes",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  AttributeController.store,
+);
+router.put(
+  "/attributes/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  AttributeController.update,
+);
+router.delete(
+  "/attributes/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  AttributeController.destroy,
+);
 /**
  * ******************************************
  * Authorized Route for Staff & Store Owner
