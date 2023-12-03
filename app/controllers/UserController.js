@@ -6,8 +6,10 @@ import MailService from "../services/MailService.js";
 import * as AuthService from "../services/AuthService.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import * as UserRepository from "../repositories/UserRepository.js";
+import * as OAuth2Service from "../services/OAuth2Service.js";
+import * as MediaService from "../services/MediaService.js";
 
-const { User, PasswordReset } = models;
+const { User, PasswordReset, UserProfile } = models;
 
 export const token = async (req, res) => {
   try {
@@ -27,6 +29,61 @@ export const token = async (req, res) => {
     );
 
     return res.json({ token, permissions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const socialLogin = async (req, res) => {
+  try {
+    const user = await OAuth2Service.getUserProfile(req.body.access_token);
+    const userExist = await User.findOne({
+      where: {
+        email: user.email,
+        is_active: true,
+      },
+    });
+
+    let token, permissionNames;
+
+    if (!userExist) {
+      const newUser = {
+        name: user.name,
+        email: user.email,
+        provider: req.body.provider,
+        provider_user_id: user.id,
+        email_verified_at: new Date(),
+      };
+
+      const createdUser = await User.create(newUser);
+      const permissions = [PermissionEnum.CUSTOMER];
+      await AuthService.givePermissionTo(createdUser, permissions);
+
+      const avatar = {
+        thumbnail: user.avatar,
+        original: user.avatar,
+      };
+
+      await UserProfile.create({
+        customer_id: createdUser.id,
+        avatar: JSON.stringify(avatar),
+      });
+
+      token = await AuthService.createToken(createdUser);
+      permissionNames = await AuthService.getPermissionNames(
+        await createdUser.getPermissions()
+      );
+
+      await new MailService().sendWelcome(user);
+    } else {
+      token = await AuthService.createToken(userExist);
+      permissionNames = await AuthService.getPermissionNames(
+        await userExist.getPermissions()
+      );
+    }
+
+    return res.json({ token, permissions: permissionNames });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -61,7 +118,7 @@ export const register = async (req, res) => {
     const permissionNames = await AuthService.getPermissionNames(
       await user.getPermissions()
     );
-    await new MailService().sendResetPassword(user);
+    await new MailService().sendWelcome(user);
     return res.json({ token, permissions: permissionNames });
   } catch (error) {
     console.error(error);
@@ -301,5 +358,28 @@ export const updateContact = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(422).json({ error: constants.INVALID_GATEWAY });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const user = req.user;
+    if (await bcrypt.compare(req.body.oldPassword, user.password)) {
+      await user.update({
+        password: await bcrypt.hash(req.body.newPassword, 10),
+      });
+      return res.json({
+        message: constants.PASSWORD_RESET_SUCCESSFUL,
+        success: true,
+      });
+    } else {
+      return res.json({
+        message: constants.OLD_PASSWORD_INCORRECT,
+        success: false,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

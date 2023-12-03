@@ -9,9 +9,9 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadMedia = async (media) => {
+export const uploadMedia = async (path) => {
   try {
-    const result = await cloudinary.uploader.upload(media.path);
+    const result = await cloudinary.uploader.upload(path);
 
     return result;
   } catch (error) {

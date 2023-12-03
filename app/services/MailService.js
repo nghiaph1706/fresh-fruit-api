@@ -1,6 +1,10 @@
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 import getShopConfig from "../config/shop.js";
+import fs from "fs";
+import ejs from "ejs";
+import juice from "juice";
+
 dotenv.config();
 
 export default class MailService {
@@ -36,24 +40,25 @@ export default class MailService {
   }
 
   async sendResetPassword(details) {
-    const mailOptions = {
-      from: getShopConfig("admin_email"),
-      to: details.email,
-      subject: "Reset Your Password",
-      html: `
-        <p>Hello,</p>
-        <p>Please copy the below token to reset your password.</p>
-        <p>--- ${details.token} ---</p>
-        <p>Thank you,<br>${process.env.APP_NAME || "APP_NAME"}</p>
-      `,
-    };
+    const templatePath = `templates/resetPassword.html`;
+    if (fs.existsSync(templatePath)) {
+      const template = fs.readFileSync(templatePath, "utf-8");
+      const html = ejs.render(template, { token: details.token });
+      const htmlWithStylesInlined = juice(html);
+      const mailOptions = {
+        from: getShopConfig("admin_email"),
+        to: details.email,
+        subject: "Reset Your Password",
+        html: htmlWithStylesInlined,
+      };
 
-    try {
-      const info = await this.transport.sendMail(mailOptions);
-      return true;
-    } catch (error) {
-      console.error("Error sending Reset Password email:", error);
-      return false;
+      try {
+        const info = await this.transport.sendMail(mailOptions);
+        return true;
+      } catch (error) {
+        console.error("Error sending Reset Password email:", error);
+        return false;
+      }
     }
   }
 

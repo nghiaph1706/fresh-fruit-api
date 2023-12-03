@@ -28,7 +28,7 @@ export const store = async (req, res) => {
     let result = [];
 
     for (const attachment of attachments) {
-      const attachmentUploaded = await MediaService.uploadMedia(attachment);
+      const attachmentUploaded = await MediaService.uploadMedia(attachment.path);
       const attachmentThumb = await MediaService.generateMediaThumb(
         attachmentUploaded
       );

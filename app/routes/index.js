@@ -42,6 +42,7 @@ router.post(
   "/verify-forget-password-token",
   UserController.verifyForgetPasswordToken,
 );
+router.post("/social-login-token", UserController.socialLogin);
 router.post("/reset-password", UserController.resetPassword);
 router.post("/contact-us", UserController.contactAdmin);
 router.post("/subscribe-to-newsletter", UserController.subscribeToNewsletter);
@@ -184,6 +185,11 @@ router.get(
   "/my-reports",
   authMiddleware([PermissionEnum.CUSTOMER]),
   AbusiveReportController.myReports,
+);
+router.post(
+  "/change-password",
+  authMiddleware([PermissionEnum.CUSTOMER]),
+  UserController.changePassword,
 );
 router.post(
   "/update-contact",
