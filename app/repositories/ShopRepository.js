@@ -1,5 +1,6 @@
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
+import { customSlugify } from "../services/UtilServcie.js";
 
 const { Shop } = models;
 
