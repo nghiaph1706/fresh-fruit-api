@@ -1,13 +1,24 @@
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
-import { makeSlug } from "../repositories/BaseRepository.js";
 
 const { Shop } = models;
 
 export const storeShop = async (req) => {
   try {
     const data = req.body;
-    data.slug = makeSlug(req);
+    const slugText = await (() => {
+      if (req.body.slug) {
+        return req.body.slug;
+      } else if (req.body.name) {
+        return req.body.name;
+      } else if (req.body.title) {
+        return req.body.title;
+      } else {
+        return "auto-generated-string";
+      }
+    })();
+
+    data.slug = customSlugify(slugText);
     data.owner_id = req.user.id;
     const shop = await Shop.create(data);
     if (data.categories) {
