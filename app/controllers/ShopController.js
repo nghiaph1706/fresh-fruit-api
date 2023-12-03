@@ -2,6 +2,7 @@ import { Op, literal } from "sequelize";
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import PermissionEnum from "../config/enum/Permission.js";
+import * as ShopRepository from "../repositories/ShopRepository.js";
 
 const { Shop, User, UserProfile, Balance, Product } = models;
 
@@ -181,5 +182,19 @@ export const handleFollowShop = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(404).json({ message: constants.NOT_FOUND });
+  }
+};
+
+export const store = async (req, res) => {
+  try {
+    if (req.isStoreOwner) {
+      const shop = await ShopRepository.storeShop(req);
+      res.send(shop);
+    } else {
+      res.status(401).json({ message: constants.NOT_AUTHORIZED });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

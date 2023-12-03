@@ -44,7 +44,7 @@ export default function (sequelize, DataTypes) {
         comment: "null",
       },
       payment_info: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },

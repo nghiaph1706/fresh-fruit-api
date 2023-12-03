@@ -36,12 +36,12 @@ export default function (sequelize, DataTypes) {
         comment: "null",
       },
       cover_image: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
       logo: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
@@ -52,17 +52,17 @@ export default function (sequelize, DataTypes) {
         comment: "null",
       },
       address: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
       settings: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
       notifications: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
