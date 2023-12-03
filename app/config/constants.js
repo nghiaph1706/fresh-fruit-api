@@ -2,14 +2,10 @@
 import getShopConfig from "./shop.js";
 
 const APP_NOTICE_DOMAIN =
-  process.env.APP_NOTICE_DOMAIN ||
-  getShopConfig("app_notice_domain") ||
-  "MARVEL_";
+  "PICKBAZAR_";
 const DEFAULT_LANGUAGE =
   process.env.DEFAULT_LANGUAGE || getShopConfig("default_language") || "en";
 const TRANSLATION_ENABLED =
-  process.env.TRANSLATION_ENABLED === "true" ||
-  getShopConfig("translation_enabled") ||
   false;
 const DEFAULT_CURRENCY =
   process.env.DEFAULT_CURRENCY || getShopConfig("default_currency") || "USD";

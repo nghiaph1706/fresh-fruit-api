@@ -22,6 +22,7 @@ export const updateUser = async (req, user) => {
     }
 
     if (req.body.profile) {
+      req.body.profile.avatar = JSON.stringify(req.body.profile.avatar);
       if (req.body.profile.id) {
         await UserProfile.update(req.body.profile, {
           where: {

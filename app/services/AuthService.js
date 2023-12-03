@@ -74,12 +74,11 @@ export const destroyAccessToken = async (token) => {
 };
 
 export const hasPermission = async (user, shopId = null) => {
-  const permissions = await user.getPermissions();
-  if (user && permissions.includes(PersonalAccessToken.SUPER_ADMIN)) {
-    return true;
-  }
-
   try {
+    const permissions = await user.getPermissions();
+    if (user && permissions.includes(PersonalAccessToken.SUPER_ADMIN)) {
+      return true;
+    }
     const shop = await Shop.findByPk(shopId, {
       include: [
         {
