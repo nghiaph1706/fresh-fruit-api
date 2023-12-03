@@ -1,46 +1,47 @@
 // models/index.js
 import { Sequelize } from "sequelize";
+import AbusiveReportModel from "./abusive_reports.js";
+import AddressModel from "./address.js";
+import AttachmentModel from "./attachments.js";
+import AttributeValueModel from "./attribute_values.js";
+import AttributeModel from "./attributes.js";
 import AuthorsModel from "./authors.js";
+import AvailabilityModel from "./availabilities.js";
+import BalanceModel from "./balances.js";
+import BannerModel from "./banners.js";
+import CategoryModel from "./categories.js";
+import CategoryProductModel from "./category_product.js";
+import CategoryShopModel from "./category_shop.js";
+import CouponModel from "./coupons.js";
+import DeliveryTimeModel from "./delivery_times.js";
+import FeedbackModel from "./feedbacks.js";
+import LanguageModel from "./languages.js";
 import ManufacturersModel from "./manufacturers.js";
 import ModelHasPermissionsModel from "./model_has_permissions.js";
+import OrderProductModel from "./order_product.js";
+import WalletPointModel from "./order_wallet_points.js";
 import OrdersModel from "./orders.js";
+import PasswordResetModel from "./password_resets.js";
+import PaymentIntentModel from "./payment_intents.js";
 import PermissionsModel from "./permissions.js";
 import PersonalAccessTokensModel from "./personal_access_tokens.js";
 import ProductsModel from "./products.js";
-import ShopsModel from "./shops.js";
-import TypesModel from "./types.js";
-import UserModel from "./users.js";
-import PasswordResetModel from "./password_resets.js";
-import OrderProductModel from "./order_product.js";
-import AvailabilityModel from "./availabilities.js";
-import CategoryModel from "./categories.js";
-import CategoryProductModel from "./category_product.js";
-import BannerModel from "./banners.js";
-import DeliveryTimeModel from "./delivery_times.js";
-import LanguageModel from "./languages.js";
-import TagModel from "./tags.js";
-import CouponModel from "./coupons.js";
-import SettingModel from "./settings.js";
+import QuestionModel from "./questions.js";
+import RefundModel from "./refunds.js";
 import ResourceModel from "./resources.js";
-import AttributeModel from "./attributes.js";
-import AttributeValueModel from "./attribute_values.js";
+import ReviewModel from "./reviews.js";
+import SettingModel from "./settings.js";
+import ShippingModel from "./shipping_classes.js";
+import ShopsModel from "./shops.js";
+import TagModel from "./tags.js";
+import TaxModel from "./tax_classes.js";
+import TypesModel from "./types.js";
 import UserProfileModel from "./user_profiles.js";
 import UserShopModel from "./user_shop.js";
-import BalanceModel from "./balances.js";
-import ReviewModel from "./reviews.js";
-import QuestionModel from "./questions.js";
-import FeedbackModel from "./feedbacks.js";
-import WalletModel from "./wallets.js";
+import UserModel from "./users.js";
 import VariationModel from "./variation_options.js";
-import ShippingModel from "./shipping_classes.js";
-import TaxModel from "./tax_classes.js";
+import WalletModel from "./wallets.js";
 import WishlistModel from "./wishlists.js";
-import WalletPointModel from "./order_wallet_points.js";
-import PaymentIntentModel from "./payment_intents.js";
-import AddressModel from "./address.js";
-import AbusiveReportModel from "./abusive_reports.js";
-import RefundModel from "./refunds.js";
-import AttachmentModel from "./attachments.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -99,8 +100,9 @@ const models = {
   Address: AddressModel(sequelize, Sequelize.DataTypes),
   AbusiveReport: AbusiveReportModel(sequelize, Sequelize.DataTypes),
   Attachment: AttachmentModel(sequelize, Sequelize.DataTypes),
+  CategoryShop: CategoryShopModel(sequelize, Sequelize.DataTypes),
   // Add other models here if needed
-  Refund : RefundModel(sequelize, Sequelize.DataTypes),
+  Refund: RefundModel(sequelize, Sequelize.DataTypes),
 };
 
 Object.values(models).forEach((model) => {

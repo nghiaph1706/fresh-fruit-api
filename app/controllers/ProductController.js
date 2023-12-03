@@ -181,7 +181,7 @@ export const store = async (req, res) => {
   try {
     const hasPermission = await AuthService.hasPermission(
       req.user,
-      req.params.shop_id
+      req.body.shop_id
     );
     if (hasPermission) {
       const product = await ProductRepository.storeProduct(req);

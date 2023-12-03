@@ -32,7 +32,7 @@ export default function (sequelize, DataTypes) {
         comment: "null",
       },
       notifications: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
@@ -70,6 +70,6 @@ export default function (sequelize, DataTypes) {
       as: "user",
     });
   };
-  
+
   return UserProfile;
 }
