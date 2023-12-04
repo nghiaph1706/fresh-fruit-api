@@ -3,11 +3,23 @@ import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import * as ShopRepository from "../repositories/ShopRepository.js";
+import * as UtilService from "../services/UtilServcie.js";
 
 const { Shop, User, UserProfile, Balance, Product } = models;
 
 export const index = async (req, res) => {
-  const shops = await Shop.findAll({
+  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const orderBy = req.query.orderBy || "created_at";
+  const sortedBy = req.query.sortedBy || "desc";
+  const search = UtilService.convertToObject(req.query.search);
+
+  let base;
+
+  const shops = await Shop.findAndCountAll({
+    where: {
+      name: { [Op.like]: `%${search?.name || ""}%` },
+    },
     attributes: {
       include: [
         [
@@ -16,7 +28,7 @@ export const index = async (req, res) => {
               FROM orders
               WHERE orders.shop_id = shops.id
             )`),
-          "ordersCount",
+          "orders_count",
         ],
         [
           literal(`(
@@ -24,7 +36,7 @@ export const index = async (req, res) => {
               FROM products
               WHERE products.shop_id = shops.id
             )`),
-          "productsCount",
+          "products_count",
         ],
       ],
     },
@@ -40,9 +52,12 @@ export const index = async (req, res) => {
         ],
       },
     ],
+    order: [[orderBy, sortedBy]],
+    limit: limit,
+    offset: offset,
   });
 
-  return res.json({ data: shops });
+  return res.json(UtilService.paginate(shops.count, limit, offset, shops.rows));
 };
 
 export const show = async (req, res) => {
@@ -68,7 +83,7 @@ export const show = async (req, res) => {
               FROM orders
               WHERE orders.shop_id = shops.id
             )`),
-          "ordersCount",
+          "orders_count",
         ],
         [
           literal(`(
@@ -76,7 +91,7 @@ export const show = async (req, res) => {
               FROM products
               WHERE products.shop_id = shops.id
             )`),
-          "productsCount",
+          "products_count",
         ],
       ],
     },
@@ -196,5 +211,50 @@ export const store = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const disApproveShop = async (req, res) => {
+  try {
+    const id = req.body.id;
+    await Shop.update(
+      { is_active: false },
+      { where: { id } }
+    )
+
+    return res.send(true);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
+  }
+};
+
+export const approveShop = async (req, res) => {
+  try {
+    const id = req.body.id;
+    const admin_commission_rate = req.body.admin_commission_rate;
+    let shop = await Shop.findByPk(id);
+    if (shop) {
+      shop.update(
+        {
+          is_active: true,
+          admin_commission_rate
+        }
+      )
+      await Balance.findOrCreate({
+        where: {
+          shop_id: id,
+        },
+        default: {
+          shop_id: id,
+          admin_commission_rate
+        }
+      })
+    }
+
+    return res.send(shop);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ message: constants.NOT_FOUND });
   }
 };

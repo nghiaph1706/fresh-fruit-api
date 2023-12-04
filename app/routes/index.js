@@ -332,6 +332,16 @@ router.delete(
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
   AttributeController.destroy,
 );
+router.post(
+  "/disapprove-shop",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  ShopController.disApproveShop
+);
+router.post(
+  "/approve-shop",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  ShopController.approveShop
+);
 /**
  * ******************************************
  * Authorized Route for Staff & Store Owner

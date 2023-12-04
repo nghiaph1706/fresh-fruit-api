@@ -31,3 +31,16 @@ export const customSlugify = (str) => {
   });
   return slug;
 };
+
+export const paginate = (count, limit, offset, data) => {
+  return {
+    count,
+    current_page: offset + 1,
+    firstItem: 0,
+    lastItem: count - 1,
+    last_page: Math.ceil(count / limit),
+    per_page: limit,
+    total: count,
+    data,
+  };
+};
