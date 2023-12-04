@@ -45,7 +45,7 @@ export const show = async (req, res) => {
   }
 
   if (!type) {
-    return res.status(404).json({ message: constants.NOT_FOUND });
+    return res.send([]);
   }
 
   const typeWithTranslatedLanguages = {
