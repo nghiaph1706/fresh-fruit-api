@@ -1,6 +1,8 @@
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import { customSlugify } from "../services/UtilServcie.js";
+import * as UtilService from "../services/UtilServcie.js";
+import { Op } from "sequelize";
 
 const { Tag, Type } = models;
 
@@ -8,20 +10,39 @@ export const index = async (req, res) => {
   const language = req.query.language
     ? req.query.language
     : constants.DEFAULT_LANGUAGE;
-
-  const tags = await Tag.findAll({
+  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const orderBy = req.query.orderBy || "created_at";
+  const sortedBy = req.query.sortedBy || "desc";
+  const search = UtilService.convertToObject(req.query.search);
+  const include = [];
+  let baseQuery = {
     where: {
       language,
     },
-    include: [
-      {
+    include,
+    limit,
+    offset,
+    order: [[orderBy, sortedBy]],
+  };
+  if (!search.name) {
+    if (search.type?.slug) {
+      include.push({
         model: Type,
         as: "type",
-      },
-    ],
-  });
+        where: {
+          slug: search.type.slug,
+        },
+      });
+    }
+  } else {
+    baseQuery.where.name = {
+      [Op.like]: `%${search.name}%`,
+    };
+  }
+  const tags = await Tag.findAndCountAll(baseQuery);
 
-  return res.json({ data: tags });
+  return res.json(UtilService.paginate(tags.count, limit, offset, tags.rows));
 };
 
 export const show = async (req, res) => {
