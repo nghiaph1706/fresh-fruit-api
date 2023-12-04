@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import { only } from "../repositories/TypeRepository.js";
+import * as UtilService from "../services/UtilServcie.js";
 
 const { Coupon, Setting } = models;
 
@@ -10,15 +11,30 @@ export const index = async (req, res) => {
     ? req.query.language
     : constants.DEFAULT_LANGUAGE;
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-
-  const coupons = await Coupon.findAll({
+  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const orderBy = req.query.orderBy || "created_at";
+  const sortedBy = req.query.sortedBy || "desc";
+  const search = UtilService.convertToObject(req.query.search);
+  const include = [];
+  let baseQuery = {
     where: {
       language,
     },
-    limit: limit,
-  });
+    include,
+    limit,
+    offset,
+    order: [[orderBy, sortedBy]],
+  };
+  if (search.code) {
+    baseQuery.where.code = {
+      [Op.like]: `%${search.code}%`,
+    };
+  }
+  const coupons = await Coupon.findAndCountAll(baseQuery);
 
-  return res.json({ data: coupons });
+  return res.json(
+    UtilService.paginate(coupons.count, limit, offset, coupons.rows),
+  );
 };
 
 export const show = async (req, res) => {
@@ -42,7 +58,7 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ data: coupon });
+  res.send(coupon);
 };
 
 export const verify = async (req, res) => {
