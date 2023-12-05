@@ -62,3 +62,23 @@ export const findByTrackingNumber = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const update = async (req, res) => {
+  try {
+    return res.send(await OrderRepository.updateOrder(req, res));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: constants.COULD_NOT_UPDATE_THE_RESOURCE });
+  }
+};
+
+export const destroy = async (req, res) => {
+  try {
+    const order = await Order.findByPk(req.params.id);
+    await order.destroy();
+    res.send(order);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: constants.COULD_NOT_DELETE_THE_RESOURCE });
+  }
+};
