@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { models } from "../models/index.js";
-import PermissionEnum from "../models/permissions.js";
+import PermissionEnum from '../config/enum/Permission.js';
 import constants from "../config/constants.js";
 
 dotenv.config();
@@ -76,7 +76,8 @@ export const destroyAccessToken = async (token) => {
 export const hasPermission = async (user, shopId = null) => {
   try {
     const permissions = await user.getPermissions();
-    if (user && permissions.includes(PersonalAccessToken.SUPER_ADMIN)) {
+    const permissionNames = permissions.map((permission) => permission.name);
+    if (user && permissionNames.includes(PersonalAccessToken.SUPER_ADMIN)) {
       return true;
     }
     const shop = await Shop.findByPk(shopId, {
@@ -96,11 +97,12 @@ export const hasPermission = async (user, shopId = null) => {
       throw new Error(constants.SHOP_NOT_APPROVED);
     }
 
-    if (user && permissions.includes(PermissionEnum.STORE_OWNER)) {
-      return shop.owner_id === user.id;
-    } else if (user && permissions.includes(PermissionEnum.STAFF)) {
+    if (user && permissionNames.includes(PermissionEnum.STORE_OWNER)) {
+      return shop.owner_id == user.id;
+    } else if (user && permissionNames.includes(PermissionEnum.STAFF)) {
       return shop.staffs.length > 0;
     }
+    console.log(permissionNames);
 
     return false;
   } catch (error) {
