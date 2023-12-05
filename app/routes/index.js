@@ -226,6 +226,11 @@ router.delete(
   authMiddleware([]),
   AttachmentController.destroy,
 );
+router.get(
+  "/orders/tracking-number/:tracking_number",
+  authMiddleware([]),
+  OrderController.findByTrackingNumber,
+);
 
 /**
  * *****************************************
