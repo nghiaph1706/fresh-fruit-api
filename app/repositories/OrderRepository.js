@@ -420,7 +420,7 @@ const createOrder = async (request) => {
       });
     });
 
-    await createChildOrder(order.id, request);
+    const children = await createChildOrder(order.id, request);
     return order;
   } catch (error) {
         throw new Error("Something went wrong while creating the order");

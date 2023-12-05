@@ -1,6 +1,6 @@
 import slugify from "slugify";
 
-export const convertToObject = (str) => {
+export const convertToObject = (str = '') => {
   const obj = {};
 
   const pairs = str.split(";");
