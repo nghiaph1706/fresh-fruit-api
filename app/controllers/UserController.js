@@ -27,8 +27,16 @@ export const token = async (req, res) => {
     const permissions = await AuthService.getPermissionNames(
       await user.getPermissions()
     );
+    let role = PermissionEnum.CUSTOMER;
+    if (permissions.includes(PermissionEnum.SUPER_ADMIN)) {
+      role = PermissionEnum.SUPER_ADMIN;
+    } else if (permissions.includes(PermissionEnum.STORE_OWNER)) {
+      role = PermissionEnum.STORE_OWNER;
+    } else if (permissions.includes(PermissionEnum.STAFF)) {
+      role = PermissionEnum.STAFF;
+    }
 
-    return res.json({ token, permissions });
+    return res.json({ token, permissions, role });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

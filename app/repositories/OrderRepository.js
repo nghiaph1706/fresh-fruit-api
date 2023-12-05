@@ -8,6 +8,7 @@ import OrderStatus from "../config/enum/OrderStatus.js";
 import PaymentStatus from "../config/enum/PaymentStatus.js";
 import * as CalculatePaymentService from "../services/CalculatePaymentService.js";
 import * as WalletService from "../services/WalletService.js";
+import * as UtilService from "../services/UtilServcie.js";
 
 const {
   Order,
@@ -22,11 +23,19 @@ const {
 } = models;
 
 export const fetchOrders = async (req, res) => {
+  const language = req.query.language
+    ? req.query.language
+    : constants.DEFAULT_LANGUAGE;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const orderBy = req.query.orderBy || "created_at";
+  const sortedBy = req.query.sortedBy || "desc";
   const user = req.user || null;
   const permissions = req.permissions;
+  const search = UtilService.convertToObject(req.query.search);
   const hasPermission = await AuthService.hasPermission(
     user,
-    req.params.shop_id
+    req.params.shop_id,
   );
 
   let ordersQuery = {
@@ -49,6 +58,9 @@ export const fetchOrders = async (req, res) => {
         },
       },
     ],
+    limit,
+    offset,
+    order: [[orderBy, sortedBy]],
   };
 
   if (
@@ -67,8 +79,15 @@ export const fetchOrders = async (req, res) => {
     ordersQuery.where.customer_id = user?.id;
     ordersQuery.where.parent_id = { [Op.ne]: null };
   }
-
-  return await Order.findAll(ordersQuery);
+  if (search.tracking_number) {
+    ordersQuery.where.tracking_number = {
+      [Op.like]: `%${search.tracking_number}%`,
+    };
+  }
+  const orders = await Order.findAndCountAll(ordersQuery);
+  return res.json(
+    UtilService.paginate(orders.count, limit, offset, orders.rows),
+  );
 };
 
 export const fetchSingleOrder = async (req, res) => {
@@ -187,7 +206,7 @@ export const storeOrder = async (req, settings) => {
     let user = null;
   }
   req.body.amount = await CalculatePaymentService.calculateSubtotal(
-    req.body.products
+    req.body.products,
   );
 
   let coupon = null;
@@ -200,7 +219,7 @@ export const storeOrder = async (req, settings) => {
       if (coupon) {
         req.body.discount = CalculatePaymentService.calculateDiscount(
           coupon,
-          req.body.amount
+          req.body.amount,
         );
       } else {
         throw new Error(COUPON_NOT_FOUND);
@@ -246,7 +265,7 @@ export const storeOrder = async (req, settings) => {
   if (useWalletPoints && user) {
     storeOrderWalletPoint(
       parseFloat(req.body.paid_total).toFixed(2) - amount,
-      order.id
+      order.id,
     );
     manageWalletAmount(parseFloat(req.body.paid_total).toFixed(2), user.id);
   }
@@ -290,7 +309,7 @@ const generateTrackingNumber = async () => {
     trackingNumber = `${today}${Math.floor(100000 + Math.random() * 900000)}`;
   } while (
     existingTrackingNumbers.some(
-      (existing) => existing.tracking_number === trackingNumber
+      (existing) => existing.tracking_number === trackingNumber,
     )
   );
 
@@ -318,7 +337,7 @@ const createChildOrder = async (id, request) => {
     const cartProducts = productsByShop[shopId];
     const amount = cartProducts.reduce(
       (total, cartProduct) => total + cartProduct.subtotal,
-      0
+      0,
     );
 
     const orderInput = {
@@ -346,7 +365,7 @@ const createChildOrder = async (id, request) => {
     try {
       const order = await Order.create(orderInput);
       await order.addProducts(
-        cartProducts.map((product) => product.product_id)
+        cartProducts.map((product) => product.product_id),
       );
       childOrders.push(order);
     } catch (error) {

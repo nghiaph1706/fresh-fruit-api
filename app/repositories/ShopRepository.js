@@ -2,7 +2,7 @@ import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import { customSlugify } from "../services/UtilServcie.js";
 
-const { Shop } = models;
+const { Shop, UserShop } = models;
 
 export const storeShop = async (req) => {
   try {
@@ -22,6 +22,11 @@ export const storeShop = async (req) => {
     data.slug = customSlugify(slugText);
     data.owner_id = req.user.id;
     const shop = await Shop.create(data);
+    
+    await UserShop.create({
+      UserId: req.user.id,
+      shopId: shop.id
+    });
     if (data.categories) {
       // TODO: Check if categories exist
       await shop.addCategories(data.categories);

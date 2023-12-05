@@ -135,7 +135,7 @@ export default function (sequelize, DataTypes) {
           "order-failed",
           "order-cancelled",
           "order-at-local-facility",
-          "order-out-for-delivery"
+          "order-out-for-delivery",
         ),
         allowNull: false,
         defaultValue: "order-pending",
@@ -151,7 +151,7 @@ export default function (sequelize, DataTypes) {
           "payment-cash-on-delivery",
           "payment-cash",
           "payment-wallet",
-          "payment-awaiting-for-approval"
+          "payment-awaiting-for-approval",
         ),
         allowNull: false,
         defaultValue: "payment-pending",
@@ -178,7 +178,7 @@ export default function (sequelize, DataTypes) {
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
-    }
+    },
   );
 
   Order.associate = function (models) {
@@ -201,6 +201,10 @@ export default function (sequelize, DataTypes) {
     Order.hasOne(models.WalletPoint, {
       foreignKey: "order_id",
       as: "wallet_point",
+    });
+    Order.hasOne(models.PaymentIntent, {
+      foreignKey: "order_id",
+      as: "payment_intent",
     });
   };
 
