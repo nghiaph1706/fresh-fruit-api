@@ -30,6 +30,7 @@ import * as AnalyticsController from "../controllers/AnalyticsController.js";
 import * as AttachmentController from "../controllers/AttachmentController.js";
 import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 import * as WithdrawController from "../controllers/WithdrawController.js";
+import * as RefundReasonController from "../controllers/RefundReasonController.js";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 
@@ -336,6 +337,31 @@ router.get(
   "/withdraws/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
   WithdrawController.show,
+);
+router.get(
+  "/refund-reasons",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  RefundReasonController.index,
+);
+router.get(
+  "/refund-reasons/:slug",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  RefundReasonController.show,
+);
+router.post(
+  "/refund-reasons",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  RefundReasonController.store,
+);
+router.put(
+  "/refund-reasons/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  RefundReasonController.update,
+);
+router.delete(
+  "/refund-reasons/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  RefundReasonController.destroy,
 );
 /**
  * ******************************************
