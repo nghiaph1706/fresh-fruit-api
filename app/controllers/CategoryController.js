@@ -110,8 +110,7 @@ export const show = async (req, res) => {
 };
 
 export const store = async (req, res) => {
-  const { name, type_id, icon, image, details, language, parent } =
-    req.body;
+  const { name, type_id, icon, image, details, language, parent } = req.body;
   const slug = customSlugify(name);
   const category = await Category.create({
     name,
@@ -129,8 +128,7 @@ export const store = async (req, res) => {
 
 export const update = async (req, res) => {
   const { id } = req.params;
-  const { name, type_id, icon, image, details, language, parent } =
-    req.body;
+  const { name, type_id, icon, image, details, language, parent } = req.body;
 
   const category = await Category.findOne({
     where: {

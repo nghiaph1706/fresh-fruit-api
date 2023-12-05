@@ -78,7 +78,10 @@ export const popularProducts = async (req, res) => {
 };
 
 export const index = async (req, res) => {
-  const limit = parseInt(req.query.limit) || 15;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const orderBy = req.query.orderBy || "created_at";
+  const sortedBy = req.query.sortedBy || "desc";
   const search = UtilService.convertToObject(req.query.search);
   let unavailableProducts = [];
   const language = req.query.language || constants.DEFAULT_LANGUAGE;
@@ -101,6 +104,8 @@ export const index = async (req, res) => {
     },
     include,
     limit,
+    offset,
+    order: [[orderBy, sortedBy]],
   };
 
   if (!search.name) {
@@ -127,9 +132,11 @@ export const index = async (req, res) => {
     };
   }
 
-  const products = await Product.findAll(baseQuery);
+  const products = await Product.findAndCountAll(baseQuery);
 
-  return res.json({ data: products });
+  return res.json(
+    UtilService.paginate(products.count, limit, offset, products.rows)
+  );
 };
 
 export const show = async (req, res) => {
