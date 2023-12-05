@@ -43,6 +43,7 @@ import VariationModel from "./variation_options.js";
 import WalletModel from "./wallets.js";
 import WishlistModel from "./wishlists.js";
 import WithdrawModel from "./withdraws.js";
+import RefundReasonModel from "./refund_reasons.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -105,6 +106,7 @@ const models = {
   // Add other models here if needed
   Refund: RefundModel(sequelize, Sequelize.DataTypes),
   Withdraw: WithdrawModel(sequelize, Sequelize.DataTypes),
+  RefundReason: RefundReasonModel(sequelize, Sequelize.DataTypes),
 };
 
 Object.values(models).forEach((model) => {
