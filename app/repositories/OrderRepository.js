@@ -73,7 +73,7 @@ export const fetchOrders = async (req, res) => {
     ordersQuery.where.parent_id = null;
   } else if (hasPermission) {
     console.log(2);
-    ordersQuery.where.parent_id = null;
+    ordersQuery.where.parent_id = { [Op.ne]: null };
     ordersQuery.where.shop_id = req.query.shop_id;
   } else {
     console.log(3);
@@ -320,9 +320,9 @@ const generateTrackingNumber = async () => {
 const createChildOrder = async (id, request) => {
   const products = request.body.products;
   const language = request.body.language;
-  const productsByShop = {};
+  const productsByShop = [];
 
-  products.forEach(async (cartProduct) => {
+  await Promise.all(products.map(async (cartProduct) => {
     const product = await Product.findByPk(cartProduct.product_id);
     if (product) {
       if (!productsByShop[product.shop_id]) {
@@ -330,7 +330,7 @@ const createChildOrder = async (id, request) => {
       }
       productsByShop[product.shop_id].push(cartProduct);
     }
-  });
+  }));
 
   const childOrders = [];
 
@@ -342,13 +342,13 @@ const createChildOrder = async (id, request) => {
     );
 
     const orderInput = {
-      tracking_number: generateTrackingNumber(),
+      tracking_number: await generateTrackingNumber(),
       shop_id: shopId,
       order_status: request.body.order_status,
       payment_status: request.body.payment_status,
       customer_id: request.body.customer_id,
-      shipping_address: request.body.shipping_address,
-      billing_address: request.body.billing_address,
+      shipping_address: JSON.stringify(request.body.shipping_address),
+      billing_address: JSON.stringify(request.body.billing_address),
       customer_contact: request.body.customer_contact,
       customer_name: request.body.customer_name,
       delivery_time: request.body.delivery_time,
@@ -365,9 +365,15 @@ const createChildOrder = async (id, request) => {
 
     try {
       const order = await Order.create(orderInput);
-      await order.addProducts(
-        cartProducts.map((product) => product.product_id)
-      );
+      products.forEach(async (product) => {
+        await OrderProduct.create({
+          orderId: order.id,
+          productId: product.product_id,
+          order_quantity: product.order_quantity,
+          unit_price: product.unit_price,
+          subtotal: product.subtotal,
+        });
+      });
       childOrders.push(order);
     } catch (error) {
       throw new Error("Error creating child order");
@@ -414,10 +420,10 @@ const createOrder = async (request) => {
       });
     });
 
-    await createChildOrder(order, request);
+    await createChildOrder(order.id, request);
     return order;
   } catch (error) {
-    throw new Error("Something went wrong while creating the order");
+        throw new Error("Something went wrong while creating the order");
   }
 };
 
