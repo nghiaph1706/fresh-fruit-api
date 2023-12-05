@@ -459,7 +459,7 @@ async function manageWalletAmount(total, customer_id) {
 }
 
 export const updateOrder = async (req, res) => {
-  const order = await Order.findByPk(req.body.id);
+  const order = await Order.findByPk(req.params.id);
   const user = req.user || null;
   if (order.shop_id) {
     if (await AuthService.hasPermission(user, order.shop_id)) {
