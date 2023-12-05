@@ -132,6 +132,10 @@ export const index = async (req, res) => {
     };
   }
 
+  if (search?.shop_id) {
+    baseQuery.where.shop_id = search?.shop_id;
+  }
+
   const products = await Product.findAndCountAll(baseQuery);
 
   return res.json(

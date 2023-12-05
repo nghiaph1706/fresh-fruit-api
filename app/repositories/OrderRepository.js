@@ -36,7 +36,7 @@ export const fetchOrders = async (req, res) => {
   const search = UtilService.convertToObject(req.query.search);
   const hasPermission = await AuthService.hasPermission(
     user,
-    req.params.shop_id
+    req.query.shop_id
   );
 
   let ordersQuery = {
@@ -67,14 +67,14 @@ export const fetchOrders = async (req, res) => {
   if (
     user &&
     permissions.includes(Permission.SUPER_ADMIN) &&
-    req.params.shop_id
+    req.query.shop_id
   ) {
     console.log(1);
     ordersQuery.where.parent_id = null;
   } else if (hasPermission) {
     console.log(2);
     ordersQuery.where.parent_id = null;
-    ordersQuery.where.shop_id = req.params.shop_id;
+    ordersQuery.where.shop_id = req.query.shop_id;
   } else {
     console.log(3);
     ordersQuery.where.customer_id = user?.id;
