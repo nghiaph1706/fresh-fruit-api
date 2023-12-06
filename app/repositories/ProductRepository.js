@@ -233,7 +233,7 @@ export const updateProduct = async (req) => {
       //   );
       // }
     }
-    await product.update(data);
+    return await product.update(data);
     // TODO
     // if (product.product_type === ProductType.SIMPLE) {
     //   await product.variations.destroy();
