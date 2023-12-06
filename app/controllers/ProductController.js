@@ -159,6 +159,7 @@ export const show = async (req, res) => {
           language,
           slug,
         },
+        include: [{ model: Type }, { model: Shop }, { model: Category }],
       });
     }
 
