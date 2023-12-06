@@ -83,9 +83,9 @@ export const storeProduct = async (req) => {
     //   });
     //   product.setMeta(metas);
     // }
-    // if (req.body.categories) {
-    //   product.setCategories(req.body.categories);
-    // }
+    if (req.body.categories) {
+      product.setCategories(req.body.categories);
+    }
     // if (req.body.dropoff_locations) {
     //   product.setDropoffLocations(req.body.dropoff_locations);
     // }
@@ -101,9 +101,9 @@ export const storeProduct = async (req) => {
     // if (req.body.deposits) {
     //   product.setDeposits(req.body.deposits);
     // }
-    // if (req.body.tags) {
-    //   product.setTags(req.body.tags);
-    // }
+    if (req.body.tags) {
+      product.setTags(req.body.tags);
+    }
     // if (req.body.variations) {
     //   product.setVariations(req.body.variations);
     // }
@@ -160,9 +160,9 @@ export const updateProduct = async (req) => {
     //   });
     //   product.setMeta(metas);
     // }
-    // if (req.body.categories) {
-    //   product.setCategories(req.body.categories);
-    // }
+    if (req.body.categories) {
+      product.setCategories(req.body.categories);
+    }
     // if (req.body.dropoff_locations) {
     //   product.setDropoffLocations(req.body.dropoff_locations);
     // }
@@ -178,9 +178,9 @@ export const updateProduct = async (req) => {
     // if (req.body.deposits) {
     //   product.setDeposits(req.body.deposits);
     // }
-    // if (req.body.tags) {
-    //   product.setTags(req.body.tags);
-    // }
+    if (req.body.tags) {
+      product.setTags(req.body.tags);
+    }
     // if (req.body.variations) {
     //   product.setVariations(req.body.variations);
     // }
