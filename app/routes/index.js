@@ -32,6 +32,7 @@ import { authMiddleware } from "../middlewares/AuthMiddleware.js";
 import * as WithdrawController from "../controllers/WithdrawController.js";
 import * as RefundReasonController from "../controllers/RefundReasonController.js";
 import * as FaqController from "../controllers/FaqController.js";
+import * as TaxController from "../controllers/TaxController.js";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 
@@ -388,6 +389,31 @@ router.post(
   "/users/unblock-user",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
   UserController.activeUser,
+);
+router.post(
+  "/taxes",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  TaxController.store,
+);
+router.put(
+  "/taxes/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  TaxController.update,
+);
+router.delete(
+  "/taxes/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  TaxController.destroy,
+);
+router.get(
+  "/taxes",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  TaxController.index,
+);
+router.get(
+  "/taxes/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  TaxController.show,
 );
 /**
  * ******************************************
