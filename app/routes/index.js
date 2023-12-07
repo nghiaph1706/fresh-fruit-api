@@ -369,6 +369,26 @@ router.delete(
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
   FaqController.destroy,
 );
+router.get(
+  "/users",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  UserController.index,
+);
+router.post(
+  "/users",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  UserController.store,
+);
+router.post(
+  "/users/block-user",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  UserController.banUser,
+);
+router.post(
+  "/users/unblock-user",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  UserController.activeUser,
+);
 /**
  * ******************************************
  * Authorized Route for Staff & Store Owner
