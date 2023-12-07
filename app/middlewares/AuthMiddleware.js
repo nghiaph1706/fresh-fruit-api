@@ -22,14 +22,14 @@ export const authMiddleware = (roles) => {
           const user = await personalAccessToken.getUser();
           req.user = user;
           permissions = await AuthService.getPermissionNames(
-            await user.getPermissions()
+            await user.getPermissions(),
           );
         }
       }
 
       if (roles.length > 0) {
         const hasRequiredRole = roles.some((role) =>
-          permissions.includes(role)
+          permissions.includes(role),
         );
         if (!hasRequiredRole) {
           return res.status(403).json({ message: constants.NOT_AUTHORIZED });
@@ -39,6 +39,7 @@ export const authMiddleware = (roles) => {
       req.permissions = permissions;
       req.isSuperAdmin = req.permissions.includes(PermissionEnum.SUPER_ADMIN);
       req.isStoreOwner = req.permissions.includes(PermissionEnum.STORE_OWNER);
+      req.isStaff = req.permissions.includes(PermissionEnum.STAFF);
       return next();
     } catch (error) {
       // Handle the error appropriately

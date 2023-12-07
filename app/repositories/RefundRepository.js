@@ -1,5 +1,5 @@
-import { models } from '../models/index.js';
-import constants from '../config/constants.js';
+import { models } from "../models/index.js";
+import constants from "../config/constants.js";
 
 const { Refund, Order } = models;
 export const storeRefund = async (req) => {
@@ -16,7 +16,7 @@ export const storeRefund = async (req) => {
       include: [
         {
           model: Order,
-          as: 'children',
+          as: "children",
         },
       ],
     });
@@ -27,13 +27,15 @@ export const storeRefund = async (req) => {
       throw new Error(constants.NOT_AUTHORIZED);
     }
     let data = body;
-    data['customer_id'] = order.customer_id;
-    data['amount'] = order.amount;
+    data["customer_id"] = order.customer_id;
+    data["amount"] = order.amount;
+    data["shop_id"] = order.shop_id;
     const newRefund = await Refund.create(data);
     if (order.children && order.children.length > 0)
       createChildOrderRefund(order.children, data);
     return newRefund;
   } catch (error) {
+    console.log(error);
     throw new Error(constants.NOT_FOUND);
   }
 };
@@ -41,10 +43,10 @@ export const storeRefund = async (req) => {
 const createChildOrderRefund = async (orders, data) => {
   try {
     orders.forEach((order) => {
-      data['order_id'] = order.id;
-      data['customer_id'] = order.customer_id;
-      data['shop_id'] = order.shop_id;
-      data['amount'] = order.amount;
+      data["order_id"] = order.id;
+      data["customer_id"] = order.customer_id;
+      data["shop_id"] = order.shop_id;
+      data["amount"] = order.amount;
       Refund.create(data);
     });
   } catch (error) {
