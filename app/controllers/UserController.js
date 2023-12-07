@@ -1,15 +1,17 @@
 // controllers/UserController.js
 import bcrypt from "bcrypt";
 import constants from "../config/constants.js";
-import { models } from "../models/index.js";
+import { models, sequelize } from "../models/index.js";
 import MailService from "../services/MailService.js";
 import * as AuthService from "../services/AuthService.js";
 import PermissionEnum from "../config/enum/Permission.js";
 import * as UserRepository from "../repositories/UserRepository.js";
 import * as OAuth2Service from "../services/OAuth2Service.js";
 import * as MediaService from "../services/MediaService.js";
+import * as UtilService from "../services/UtilServcie.js";
+import { Op } from "sequelize";
 
-const { User, PasswordReset, UserProfile } = models;
+const { User, PasswordReset, UserProfile, Address, Permission } = models;
 
 export const token = async (req, res) => {
   try {
@@ -25,7 +27,7 @@ export const token = async (req, res) => {
 
     const token = await AuthService.createToken(user);
     const permissions = await AuthService.getPermissionNames(
-      await user.getPermissions()
+      await user.getPermissions(),
     );
     let role = PermissionEnum.CUSTOMER;
     if (permissions.includes(PermissionEnum.SUPER_ADMIN)) {
@@ -80,14 +82,14 @@ export const socialLogin = async (req, res) => {
 
       token = await AuthService.createToken(createdUser);
       permissionNames = await AuthService.getPermissionNames(
-        await createdUser.getPermissions()
+        await createdUser.getPermissions(),
       );
 
       await new MailService().sendWelcome(user);
     } else {
       token = await AuthService.createToken(userExist);
       permissionNames = await AuthService.getPermissionNames(
-        await userExist.getPermissions()
+        await userExist.getPermissions(),
       );
     }
 
@@ -124,7 +126,7 @@ export const register = async (req, res) => {
 
     const token = await AuthService.createToken(user);
     const permissionNames = await AuthService.getPermissionNames(
-      await user.getPermissions()
+      await user.getPermissions(),
     );
     await new MailService().sendWelcome(user);
     return res.json({ token, permissions: permissionNames });
@@ -224,7 +226,7 @@ export const resetPassword = async (req, res) => {
         where: {
           email: req.body.email,
         },
-      }
+      },
     );
     if (user == 0) {
       return res.json({ message: constants.NOT_FOUND, success: false });
@@ -301,7 +303,7 @@ export const me = async (req, res) => {
               },
             },
           ],
-        })
+        }),
       );
     }
     throw new Error(constants.NOT_AUTHORIZED);
@@ -388,6 +390,108 @@ export const changePassword = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const index = async (req, res) => {
+  const language = req.query.language
+    ? req.query.language
+    : constants.DEFAULT_LANGUAGE;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const orderBy = req.query.orderBy || "created_at";
+  const sortedBy = req.query.sortedBy || "desc";
+  const search = UtilService.convertToObject(req.query.search);
+  try {
+    let where = null;
+    if (search.name) {
+      where = {};
+      where["name"] = { [Op.like]: `%${search.name}%` };
+    }
+    const users = await User.findAndCountAll({
+      where,
+      include: [
+        { model: UserProfile, as: "profile" },
+        { model: Address, as: "address" },
+        { model: Permission },
+      ],
+      order: [[orderBy, sortedBy]],
+      limit: limit,
+      offset: offset,
+    });
+    return res.json(
+      UtilService.paginate(users.count, limit, offset, users.rows),
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const store = async (req, res) => {
+  const t = await sequelize.transaction();
+  try {
+    const body = req.body;
+    const user = await User.create(body, { transaction: t });
+    const permissions = [PermissionEnum.CUSTOMER];
+    await AuthService.givePermissionTo(user, permissions);
+    if (body.address && body.address.length > 0) {
+      const addresses = body.address.map((item) => {
+        return {
+          ...item,
+          customer_id: body.id,
+        };
+      });
+      await Address.bulkCreate(addresses, { transaction: t });
+    }
+
+    if (body.profile) {
+      const profile = await UserProfile.create(body.profile, {
+        transaction: t,
+      });
+    }
+    await t.commit();
+    return res.status(201).send(user);
+  } catch (error) {
+    console.log(error);
+    await t.rollback();
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const banUser = async (req, res) => {
+  try {
+    const user = req.user;
+    if (user && req.isSuperAdmin && user.id != req.body.id) {
+      const banUser = await User.findOne({ where: { id: req.body.id } });
+      if (!banUser) res.status(404).json({ message: constants.NOT_FOUND });
+      banUser.is_active = false;
+      const result = await banUser.save();
+      return res.status(200).send(result);
+    } else {
+      return res.status(401).send(constants.NOT_AUTHORIZED);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const activeUser = async (req, res) => {
+  try {
+    const user = req.user;
+    if (user && req.isSuperAdmin && user.id != req.body.id) {
+      const banUser = await User.findOne({ where: { id: req.body.id } });
+      if (!banUser) res.status(404).json({ message: constants.NOT_FOUND });
+      banUser.is_active = true;
+      const result = await banUser.save();
+      return res.status(200).send(result);
+    } else {
+      return res.status(401).send(constants.NOT_AUTHORIZED);
+    }
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
