@@ -2,90 +2,103 @@
 
 export default function (sequelize, DataTypes) {
   const Refund = sequelize.define(
-    'refunds',
+    "refunds",
     {
       id: {
         type: DataTypes.BIGINT,
         allowNull: false,
         primaryKey: true,
-        comment: 'null',
+        comment: "null",
         autoIncrement: true,
       },
       amount: {
-        type: 'DOUBLE',
+        type: "DOUBLE",
         allowNull: false,
-        defaultValue: '0',
-        comment: 'null',
+        defaultValue: "0",
+        comment: "null",
       },
       status: {
         type: DataTypes.STRING(191),
         allowNull: false,
-        defaultValue: 'pending',
-        comment: 'null',
+        defaultValue: "pending",
+        comment: "null",
       },
       title: {
         type: DataTypes.STRING(191),
         allowNull: true,
-        comment: 'null',
+        comment: "null",
       },
       description: {
         type: DataTypes.TEXT,
         allowNull: true,
-        comment: 'null',
+        comment: "null",
       },
       images: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
-        comment: 'null',
+        comment: "null",
       },
       order_id: {
         type: DataTypes.BIGINT,
         allowNull: true,
-        comment: 'null',
+        comment: "null",
         references: {
-          model: 'orders',
-          key: 'id',
+          model: "orders",
+          key: "id",
         },
       },
       customer_id: {
         type: DataTypes.BIGINT,
         allowNull: true,
-        comment: 'null',
+        comment: "null",
         references: {
-          model: 'users',
-          key: 'id',
+          model: "users",
+          key: "id",
         },
       },
       shop_id: {
         type: DataTypes.BIGINT,
         allowNull: true,
-        comment: 'null',
+        comment: "null",
         references: {
-          model: 'shops',
-          key: 'id',
+          model: "shops",
+          key: "id",
+        },
+      },
+      refund_reason_id: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+        comment: "null",
+        references: {
+          model: "refund_reasons",
+          key: "id",
         },
       },
       created_at: {
         type: DataTypes.DATE,
         allowNull: true,
-        comment: 'null',
+        comment: "null",
       },
       updated_at: {
         type: DataTypes.DATE,
         allowNull: true,
-        comment: 'null',
+        comment: "null",
       },
     },
     {
-      tableName: 'refunds',
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
+      tableName: "refunds",
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     },
   );
   Refund.associate = (models) => {
-    Refund.belongsTo(models.User, { foreignKey: 'customer_id' });
-    Refund.belongsTo(models.Shop, { foreignKey: 'shop_id' });
-    Refund.belongsTo(models.Order, { foreignKey: 'order_id' });
+    Refund.belongsTo(models.User, {
+      foreignKey: "customer_id",
+      as: "customer",
+    });
+    Refund.belongsTo(models.Shop, { foreignKey: "shop_id" });
+    Refund.belongsTo(models.Order, { foreignKey: "order_id" });
+    Refund.belongsTo(models.RefundReason, { foreignKey: "refund_reason_id" });
   };
   return Refund;
 }

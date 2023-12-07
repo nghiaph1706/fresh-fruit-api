@@ -45,6 +45,7 @@ import VariationModel from "./variation_options.js";
 import WalletModel from "./wallets.js";
 import WishlistModel from "./wishlists.js";
 import WithdrawModel from "./withdraws.js";
+import FaqModel from "./faqs.js";
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -56,7 +57,7 @@ const sequelize = new Sequelize(
     dialectOptions: {
       connectTimeout: 100000,
     },
-  }
+  },
 );
 
 const models = {
@@ -65,7 +66,7 @@ const models = {
   UserHasPermission: ModelHasPermissionsModel(sequelize, Sequelize.DataTypes),
   PersonalAccessToken: PersonalAccessTokensModel(
     sequelize,
-    Sequelize.DataTypes
+    Sequelize.DataTypes,
   ),
   Author: AuthorsModel(sequelize, Sequelize.DataTypes),
   Product: ProductsModel(sequelize, Sequelize.DataTypes),
@@ -109,6 +110,7 @@ const models = {
   Withdraw: WithdrawModel(sequelize, Sequelize.DataTypes),
   RefundReason: RefundReasonModel(sequelize, Sequelize.DataTypes),
   ProductTag: ProductTagModel(sequelize, Sequelize.DataTypes),
+  Faq: FaqModel(sequelize, Sequelize.DataTypes),
 };
 
 Object.values(models).forEach((model) => {
