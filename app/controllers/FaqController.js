@@ -3,6 +3,7 @@ import Permission from "../config/enum/Permission.js";
 import { models, sequelize } from "../models/index.js";
 import { hasPermission } from "../services/AuthService.js";
 import * as UtilService from "../services/UtilServcie.js";
+import { Op } from "sequelize";
 
 const { Faq, Shop } = models;
 export const index = async (req, res) => {
@@ -15,15 +16,18 @@ export const index = async (req, res) => {
   const sortedBy = req.query.sortedBy || "desc";
   const search = UtilService.convertToObject(req.query.search);
   const query = req.params;
+  let where = {};
+  where["language"] = language;
   try {
+    if (search.faq_title) {
+      where = {};
+      where["faq_title"] = { [Op.like]: `%${search.faq_title}%` };
+    }
     const user = req.user;
-    const permissions = req.permissions;
     if (user) {
       if (req.isSuperAdmin) {
         const faqs = await Faq.findAndCountAll({
-          where: {
-            language,
-          },
+          where,
           include: [{ model: Shop, as: "shop" }],
           limit,
           offset,
@@ -36,11 +40,9 @@ export const index = async (req, res) => {
       }
       if (req.isStoreOwner) {
         if (hasPermission(user, query.shop_id)) {
+          where["shop_id"] = query.shop_id;
           const faqs = await Faq.findAndCountAll({
-            where: {
-              language,
-              shop_id: query.shop_id,
-            },
+            where,
             include: [{ model: Shop, as: "shop" }],
             limit,
             offset,
@@ -52,12 +54,10 @@ export const index = async (req, res) => {
         } else {
           const userShops = await user.getShops();
           const followedShopIds = userShops.map((shop) => shop.id);
+          where["shop_id"] = { [Op.in]: followedShopIds };
+          where["user_id"] = user.id;
           const faqs = await Faq.findAndCountAll({
-            where: {
-              language,
-              shop_id: { [Op.in]: followedShopIds },
-              user_id: user.id,
-            },
+            where,
             include: [{ model: Shop, as: "shop" }],
             limit,
             offset,
@@ -69,11 +69,9 @@ export const index = async (req, res) => {
         }
       }
       if (req.isStaff) {
+        where["shop_id"] = query.shop_id;
         const faqs = await Faq.findAndCountAll({
-          where: {
-            language,
-            shop_id: query.shop_id,
-          },
+          where,
           include: [{ model: Shop, as: "shop" }],
           limit,
           offset,
@@ -84,9 +82,7 @@ export const index = async (req, res) => {
         );
       }
       const faqs = await Faq.findAndCountAll({
-        where: {
-          language,
-        },
+        where,
         include: [{ model: Shop, as: "shop" }],
       });
       return res.json(
@@ -94,8 +90,9 @@ export const index = async (req, res) => {
       );
     } else {
       if (query.shop_id) {
+        where["shop_id"] = query.shop_id;
         const faqs = await Faq.findAndCountAll({
-          where: { language, shop_id: query.shop_id },
+          where,
           include: [{ model: Shop, as: "shop" }],
         });
         return res.json(
@@ -103,7 +100,7 @@ export const index = async (req, res) => {
         );
       } else {
         const faqs = await Faq.findAndCountAll({
-          where: { language },
+          where,
           include: [{ model: Shop, as: "shop" }],
         });
         return res.json(
