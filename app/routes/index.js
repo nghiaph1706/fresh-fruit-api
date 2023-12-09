@@ -33,6 +33,7 @@ import * as WithdrawController from "../controllers/WithdrawController.js";
 import * as RefundReasonController from "../controllers/RefundReasonController.js";
 import * as FaqController from "../controllers/FaqController.js";
 import * as TaxController from "../controllers/TaxController.js";
+import * as ShippingController from "../controllers/ShippingController.js";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 
@@ -430,6 +431,32 @@ router.delete(
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
   AttributeController.destroy,
 );
+router.put(
+  "/shippings/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  ShippingController.update,
+);
+
+router.delete(
+  "/shippings/:id",
+  authMiddleware([PermissionEnum.STAFF]),
+  ShippingController.destroy,
+);
+router.get(
+  "/shippings",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  ShippingController.index,
+);
+router.get(
+  "/shippings/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  ShippingController.show,
+);
+router.post(
+  "/shippings",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  ShippingController.store,
+);
 /**
  * ******************************************
  * Authorized Route for Staff & Store Owner
@@ -480,11 +507,7 @@ router.put(
   authMiddleware([PermissionEnum.SUPER_ADMIN, PermissionEnum.STORE_OWNER]),
   WithdrawController.update,
 );
-router.put(
-  "/refunds/:id",
-  authMiddleware([PermissionEnum.SUPER_ADMIN, PermissionEnum.STORE_OWNER]),
-  RefundsController.update,
-);
+
 /**
  * *****************************************
  * Authorized Route for Store owner Only
