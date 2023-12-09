@@ -12,7 +12,7 @@ export default function (sequelize, DataTypes) {
         autoIncrement: true,
       },
       options: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: false,
         comment: "null",
       },

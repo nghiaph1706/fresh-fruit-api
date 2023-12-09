@@ -16,3 +16,31 @@ export const index = async (req, res) => {
 
   return res.send(settings);
 };
+
+export const store = async (req, res) => {
+  const language = req.body.language
+    ? req.body.language
+    : constants.DEFAULT_LANGUAGE;
+
+  const settings = await Setting.findOne({
+    where: {
+      language,
+    },
+  });
+
+  if (settings) {
+    if (settings.options) {
+      settings.options = { ...settings.options, ...req.body.options };
+    } else {
+      settings.options = req.body.options;
+    }
+    await settings.save();
+  }
+
+  const result = await Setting.create({
+    options: req.body.options,
+    language,
+  });
+
+  return res.status(201).send(result);
+};
