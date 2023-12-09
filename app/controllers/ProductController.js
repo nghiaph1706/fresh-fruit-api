@@ -45,7 +45,7 @@ export const popularProducts = async (req, res) => {
         include: [
           [
             literal(
-              "(SELECT COUNT(*) FROM order_product WHERE order_product.product_id = products.id)"
+              "(SELECT COUNT(*) FROM order_product WHERE order_product.product_id = products.id)",
             ),
             "orderCount",
           ],
@@ -79,7 +79,7 @@ export const popularProducts = async (req, res) => {
 
 export const index = async (req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const offset = req.query.page ? (parseInt(req.query.page) - 1) * limit : 0;
   const orderBy = req.query.orderBy || "created_at";
   const sortedBy = req.query.sortedBy || "desc";
   const search = UtilService.convertToObject(req.query.search);
@@ -90,7 +90,7 @@ export const index = async (req, res) => {
     const dateRange = req.query.date_range.split("//");
     unavailableProducts = AvailabilityRepository.getUnavailableProducts(
       dateRange[0],
-      dateRange[1]
+      dateRange[1],
     );
   }
 
@@ -102,6 +102,7 @@ export const index = async (req, res) => {
         [Op.notIn]: unavailableProducts,
       },
     },
+    distinct: true,
     include,
     limit,
     offset,
@@ -135,11 +136,10 @@ export const index = async (req, res) => {
   if (search?.shop_id) {
     baseQuery.where.shop_id = search?.shop_id;
   }
-
   const products = await Product.findAndCountAll(baseQuery);
-
+  console.log(products.count);
   return res.json(
-    UtilService.paginate(products.count, limit, offset, products.rows)
+    UtilService.paginate(products.count, limit, offset, products.rows),
   );
 };
 
@@ -170,7 +170,7 @@ export const show = async (req, res) => {
     const relatedProducts = await ProductRepository.fetchRelated(
       product.slug,
       limit,
-      language
+      language,
     );
 
     res.json({ related_products: relatedProducts, ...product.dataValues });
@@ -193,7 +193,7 @@ export const store = async (req, res) => {
   try {
     const hasPermission = await AuthService.hasPermission(
       req.user,
-      req.body.shop_id
+      req.body.shop_id,
     );
     if (hasPermission) {
       const product = await ProductRepository.storeProduct(req);

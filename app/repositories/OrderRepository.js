@@ -28,7 +28,7 @@ export const fetchOrders = async (req, res) => {
     ? req.query.language
     : constants.DEFAULT_LANGUAGE;
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const offset = req.query.page ? (parseInt(req.query.page) - 1) * limit : 0;
   const orderBy = req.query.orderBy || "created_at";
   const sortedBy = req.query.sortedBy || "desc";
   const user = req.user || null;
@@ -36,7 +36,7 @@ export const fetchOrders = async (req, res) => {
   const search = UtilService.convertToObject(req.query.search);
   const hasPermission = await AuthService.hasPermission(
     user,
-    req.query.shop_id
+    req.query.shop_id,
   );
 
   let ordersQuery = {
@@ -59,6 +59,7 @@ export const fetchOrders = async (req, res) => {
         },
       },
     ],
+    distinct: true,
     limit,
     offset,
     order: [[orderBy, sortedBy]],
@@ -85,9 +86,14 @@ export const fetchOrders = async (req, res) => {
       [Op.like]: `%${search.tracking_number}%`,
     };
   }
+  console.log(ordersQuery);
   const orders = await Order.findAndCountAll(ordersQuery);
+  delete ordersQuery.limit;
+  delete ordersQuery.offset;
+  const count = await Order.count(ordersQuery);
+  console.log(count);
   return res.json(
-    UtilService.paginate(orders.count, limit, offset, orders.rows)
+    UtilService.paginate(orders.count, limit, offset, orders.rows),
   );
 };
 
@@ -207,7 +213,7 @@ export const storeOrder = async (req, settings) => {
     let user = null;
   }
   req.body.amount = await CalculatePaymentService.calculateSubtotal(
-    req.body.products
+    req.body.products,
   );
 
   let coupon = null;
@@ -220,7 +226,7 @@ export const storeOrder = async (req, settings) => {
       if (coupon) {
         req.body.discount = CalculatePaymentService.calculateDiscount(
           coupon,
-          req.body.amount
+          req.body.amount,
         );
       } else {
         throw new Error(COUPON_NOT_FOUND);
@@ -266,7 +272,7 @@ export const storeOrder = async (req, settings) => {
   if (useWalletPoints && user) {
     storeOrderWalletPoint(
       parseFloat(req.body.paid_total).toFixed(2) - amount,
-      order.id
+      order.id,
     );
     manageWalletAmount(parseFloat(req.body.paid_total).toFixed(2), user.id);
   }
@@ -310,7 +316,7 @@ const generateTrackingNumber = async () => {
     trackingNumber = `${today}${Math.floor(100000 + Math.random() * 900000)}`;
   } while (
     existingTrackingNumbers.some(
-      (existing) => existing.tracking_number === trackingNumber
+      (existing) => existing.tracking_number === trackingNumber,
     )
   );
 
@@ -322,15 +328,17 @@ const createChildOrder = async (id, request) => {
   const language = request.body.language;
   const productsByShop = [];
 
-  await Promise.all(products.map(async (cartProduct) => {
-    const product = await Product.findByPk(cartProduct.product_id);
-    if (product) {
-      if (!productsByShop[product.shop_id]) {
-        productsByShop[product.shop_id] = [];
+  await Promise.all(
+    products.map(async (cartProduct) => {
+      const product = await Product.findByPk(cartProduct.product_id);
+      if (product) {
+        if (!productsByShop[product.shop_id]) {
+          productsByShop[product.shop_id] = [];
+        }
+        productsByShop[product.shop_id].push(cartProduct);
       }
-      productsByShop[product.shop_id].push(cartProduct);
-    }
-  }));
+    }),
+  );
 
   const childOrders = [];
 
@@ -338,7 +346,7 @@ const createChildOrder = async (id, request) => {
     const cartProducts = productsByShop[shopId];
     const amount = cartProducts.reduce(
       (total, cartProduct) => total + cartProduct.subtotal,
-      0
+      0,
     );
 
     const orderInput = {
@@ -423,7 +431,7 @@ const createOrder = async (request) => {
     const children = await createChildOrder(order.id, request);
     return order;
   } catch (error) {
-        throw new Error("Something went wrong while creating the order");
+    throw new Error("Something went wrong while creating the order");
   }
 };
 
@@ -488,7 +496,7 @@ const changeOrderStatus = async (order, status) => {
       order.payment_gateway || PaymentGatewayType.CASH_ON_DELIVERY;
     if (
       ![PaymentGatewayType.CASH, PaymentGatewayType.CASH_ON_DELIVERY].includes(
-        paymentGatewayType
+        paymentGatewayType,
       )
     ) {
       if (order.payment_status === PaymentStatus.SUCCESS) {
@@ -497,7 +505,7 @@ const changeOrderStatus = async (order, status) => {
       orderStatusManagementOnPayment(
         order,
         newOrderStatus,
-        order.payment_status
+        order.payment_status,
       );
     } else {
       manageVendorBalance(order, newOrderStatus, prevOrderStatus);
@@ -558,7 +566,7 @@ const updateBalanceShop = async (order, actionType = "add") => {
 const orderStatusManagementOnPayment = async (
   order,
   orderStatus,
-  paymentStatus
+  paymentStatus,
 ) => {
   if (paymentStatus === PaymentStatus.PENDING) {
     // send notification to user about order is pending.

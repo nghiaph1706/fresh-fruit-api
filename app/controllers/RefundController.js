@@ -26,20 +26,17 @@ export const index = async (req, res) => {
     ? req.query.language
     : constants.DEFAULT_LANGUAGE;
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const offset = req.query.page ? (parseInt(req.query.page) - 1) * limit : 0;
   const orderBy = req.query.orderBy || "created_at";
   const sortedBy = req.query.sortedBy || "desc";
   const search = UtilService.convertToObject(req.query.search);
-  console.log(search);
   const query = req.query;
-  console.log(req.permissions);
   let where = null;
   if (search.refund_reason?.slug) {
     console.log("hello2");
     where = {};
     where["slug"] = search.refund_reason.slug;
   }
-  console.log(where);
   try {
     if (req.user && req.isSuperAdmin && !query.shop_id) {
       console.log("hello1");
@@ -63,6 +60,7 @@ export const index = async (req, res) => {
             where,
           },
         ],
+        distinct: true,
         where: {
           id: { [Op.ne]: null },
           shop_id: { [Op.eq]: null },
@@ -96,6 +94,7 @@ export const index = async (req, res) => {
             where,
           },
         ],
+        distinct: true,
         where: {
           shop_id: { [Op.eq]: query.shop_id },
         },
@@ -128,6 +127,7 @@ export const index = async (req, res) => {
             where,
           },
         ],
+        distinct: true,
         where: {
           customer_id: { [Op.eq]: req.user.id },
           shop_id: { [Op.eq]: null },
