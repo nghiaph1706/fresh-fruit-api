@@ -29,12 +29,9 @@ export const store = async (req, res) => {
   });
 
   if (settings) {
-    if (settings.options) {
-      settings.options = { ...settings.options, ...req.body.options };
-    } else {
-      settings.options = req.body.options;
-    }
+    settings.options = req.body.options;
     await settings.save();
+    return res.status(200).send(settings);
   }
 
   const result = await Setting.create({
