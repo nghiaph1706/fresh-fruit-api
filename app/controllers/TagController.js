@@ -25,21 +25,24 @@ export const index = async (req, res) => {
     offset,
     order: [[orderBy, sortedBy]],
   };
+  let type = { model: Type, as: "type" };
   if (!search.name) {
     if (search.type?.slug) {
-      include.push({
-        model: Type,
-        as: "type",
-        where: {
-          slug: search.type.slug,
-        },
-      });
+      // include.push({
+      //   model: Type,
+      //   as: "type",
+      //   where: {
+      //     slug: search.type.slug,
+      //   },
+      // });
+      type["where"] = { slug: search.type.slug };
     }
   } else {
     baseQuery.where.name = {
       [Op.like]: `%${search.name}%`,
     };
   }
+  include.push(type);
   const tags = await Tag.findAndCountAll(baseQuery);
 
   return res.json(UtilService.paginate(tags.count, limit, offset, tags.rows));
@@ -79,7 +82,7 @@ export const show = async (req, res) => {
     return res.status(404).json({ message: constants.NOT_FOUND });
   }
 
-  res.json({ data: tag });
+  res.status(200).send(tag);
 };
 
 export const store = async (req, res) => {

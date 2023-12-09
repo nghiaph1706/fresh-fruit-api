@@ -38,7 +38,7 @@ export const show = async (req, res) => {
   //   const language = req.query.language || constants.DEFAULT_LANGUAGE;
   let refundReason = null;
   try {
-    if (typeof slug != "number") {
+    if (isNaN(slug)) {
       refundReason = await RefundReason.findOne({
         where: {
           slug,
@@ -75,7 +75,7 @@ export const update = async (req, res) => {
     if (!refundReason) {
       res.status(404).send(constants.NOT_FOUND);
     }
-    body.slug = customSlugify(body.title);
+    body.slug = customSlugify(body.name);
     Object.assign(refundReason, body);
     const result = await refundReason.save();
     return res.status(200).send(result);

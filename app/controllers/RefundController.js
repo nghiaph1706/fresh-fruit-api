@@ -210,7 +210,11 @@ export const update = async (req, res) => {
     }
     const refund = await Refund.findOne({
       where: { id: req.params.id },
-      include: [{ model: Shop }, { model: Order }, { model: User }],
+      include: [
+        { model: Shop },
+        { model: Order },
+        { model: User, as: "customer" },
+      ],
     });
     console.log(refund);
     if (!refund) {

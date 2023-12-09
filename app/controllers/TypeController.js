@@ -18,7 +18,7 @@ export const index = async (req, res) => {
 
   const typesWithTranslatedLanguages = types.map((type) => ({
     ...type.toJSON(),
-    translated_languages: ['vi'],
+    translated_languages: ["vi"],
   }));
 
   return res.send(typesWithTranslatedLanguages);
@@ -68,6 +68,7 @@ export const store = async (req, res) => {
 export const update = async (req, res) => {
   try {
     const result = await TypeRepository.updateType(req);
+    result.translate_languages = ["vi"];
     return res.status(200).send(result);
   } catch (error) {
     console.log(error);
