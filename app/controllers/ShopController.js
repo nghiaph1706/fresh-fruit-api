@@ -9,7 +9,7 @@ const { Shop, User, UserProfile, Balance, Product } = models;
 
 export const index = async (req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const offset = req.query.page ? (parseInt(req.query.page) - 1) * limit : 0;
   const orderBy = req.query.orderBy || "created_at";
   const sortedBy = req.query.sortedBy || "desc";
   const search = UtilService.convertToObject(req.query.search);
@@ -52,6 +52,7 @@ export const index = async (req, res) => {
         ],
       },
     ],
+    distinct: true,
     order: [[orderBy, sortedBy]],
     limit: limit,
     offset: offset,
@@ -217,10 +218,7 @@ export const store = async (req, res) => {
 export const disApproveShop = async (req, res) => {
   try {
     const id = req.body.id;
-    await Shop.update(
-      { is_active: false },
-      { where: { id } }
-    )
+    await Shop.update({ is_active: false }, { where: { id } });
 
     return res.send(true);
   } catch (error) {
@@ -235,21 +233,19 @@ export const approveShop = async (req, res) => {
     const admin_commission_rate = req.body.admin_commission_rate;
     let shop = await Shop.findByPk(id);
     if (shop) {
-      shop.update(
-        {
-          is_active: true,
-          admin_commission_rate
-        }
-      )
+      shop.update({
+        is_active: true,
+        admin_commission_rate,
+      });
       await Balance.findOrCreate({
         where: {
           shop_id: id,
         },
         default: {
           shop_id: id,
-          admin_commission_rate
-        }
-      })
+          admin_commission_rate,
+        },
+      });
     }
 
     return res.send(shop);

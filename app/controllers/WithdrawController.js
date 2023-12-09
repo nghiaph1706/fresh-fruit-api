@@ -8,7 +8,7 @@ import * as UtilService from "../services/UtilServcie.js";
 const { Withdraw, Shop, Balance } = models;
 export const index = async (req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const offset = req.query.page ? (parseInt(req.query.page) - 1) * limit : 0;
   const orderBy = req.query.orderBy || "created_at";
   const sortedBy = req.query.sortedBy || "desc";
   try {
@@ -28,6 +28,7 @@ export const index = async (req, res) => {
           where: {
             shop_id: shop_id,
           },
+          distinct: true,
           order: [[orderBy, sortedBy]],
           limit: limit,
           offset: offset,
@@ -46,6 +47,7 @@ export const index = async (req, res) => {
           where: {
             shop_id: { [Op.ne]: null },
           },
+          distinct: true,
           order: [[orderBy, sortedBy]],
           limit: limit,
           offset: offset,
@@ -68,6 +70,7 @@ export const index = async (req, res) => {
           where: {
             id: { [Op.ne]: null },
           },
+          distinct: true,
           order: [[orderBy, sortedBy]],
           limit: limit,
           offset: offset,
