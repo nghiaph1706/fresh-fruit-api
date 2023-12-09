@@ -1,22 +1,31 @@
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import * as ReviewRepository from "../repositories/ReviewRepository.js";
+import * as UtilService from "../services/UtilServcie.js";
 const { Review, Order, Product } = models;
 
 export const index = async (req, res) => {
-  const product_id = req.query.product_id;
+  const language = req.query.language
+    ? req.query.language
+    : constants.DEFAULT_LANGUAGE;
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-  if (product_id) {
-    const reviews = await Review.findAll({
-      where: {
-        product_id,
-      },
-      limit: limit,
-    });
+  const offset = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const orderBy = req.query.orderBy || "created_at";
+  const sortedBy = req.query.sortedBy || "desc";
+  const search = UtilService.convertToObject(req.query.search);
+  const include = [];
+  const reviews = await Review.findAndCountAll({
+    where: {},
+    limit: limit,
+    include,
+    limit,
+    offset,
+    order: [[orderBy, sortedBy]],
+  });
 
-    return res.json({ data: reviews });
-  }
-  return res.status(404).json({ message: constants.NOT_FOUND });
+  return res.json(
+    UtilService.paginate(reviews.count, limit, offset, reviews.rows),
+  );
 };
 
 export const show = async (req, res) => {

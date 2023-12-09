@@ -99,10 +99,8 @@ export const updateType = async (req) => {
       transaction: t,
     });
     await t.commit();
-    return {
-      newtype,
-      translate_languages: ["vi"],
-    };
+    newtype.translate_languages = ["vi"];
+    return newtype;
   } catch (error) {
     console.log(error);
     await t.rollback();
