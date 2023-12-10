@@ -13,7 +13,7 @@ export const topAuthor = async (req, res) => {
 
     // Use Sequelize.literal for complex SQL expressions
     const productCountExpression = Sequelize.literal(
-      "(SELECT COUNT(*) FROM products WHERE products.author_id = authors.id)"
+      "(SELECT COUNT(*) FROM products WHERE products.author_id = authors.id)",
     );
 
     // Query to fetch top authors with product count
@@ -42,7 +42,7 @@ export const topAuthor = async (req, res) => {
     });
 
     // Respond with the result
-    return res.json({ data: authors });
+    return res.json(authors);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
