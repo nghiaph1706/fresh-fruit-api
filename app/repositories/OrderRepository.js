@@ -86,12 +86,10 @@ export const fetchOrders = async (req, res) => {
       [Op.like]: `%${search.tracking_number}%`,
     };
   }
-  console.log(ordersQuery);
   const orders = await Order.findAndCountAll(ordersQuery);
   delete ordersQuery.limit;
   delete ordersQuery.offset;
   const count = await Order.count(ordersQuery);
-  console.log(count);
   return res.json(
     UtilService.paginate(orders.count, limit, offset, orders.rows),
   );

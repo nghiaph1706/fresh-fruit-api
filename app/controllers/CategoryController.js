@@ -2,24 +2,113 @@ import { Op } from "sequelize";
 import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import { customSlugify } from "../services/UtilServcie.js";
+import * as UtilService from "../services/UtilServcie.js";
 
 const { Category, Type } = models;
 
+// export const index = async (req, res) => {
+//   const language = req.query.language
+//     ? req.query.language
+//     : constants.DEFAULT_LANGUAGE;
+//   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
+//   const offset = req.query.page ? (parseInt(req.query.page) - 1) * limit : 0;
+//   const orderBy = req.query.orderBy || "created_at";
+//   const sortedBy = req.query.sortedBy || "desc";
+//   const search = UtilService.convertToObject(req.query.search);
+//   const parent = req.query.parent;
+
+//   let categories;
+
+//   const baseQuery = {
+//     where: {
+//       language,
+//     },
+//     include: [
+//       { model: Type, as: "type" },
+//       {
+//         association: "parent",
+//         as: "parent",
+//         include: [
+//           { model: Type, as: "type" },
+//           { association: "parent", as: "parent" },
+//           { association: "children", as: "children" },
+//         ],
+//       },
+//       {
+//         association: "children",
+//         as: "children",
+//         include: [
+//           { model: Type, as: "type" },
+//           { association: "parent", as: "parent" },
+//           { association: "children", as: "children" },
+//         ],
+//       },
+//     ],
+//     distinct: true,
+//     limit,
+//     offset,
+//     order: [[orderBy, sortedBy]],
+//   };
+
+//   if (parent === "null") {
+//     console.log("parent is null");
+//     categories = await Category.findAndCountAll({
+//       ...baseQuery,
+//       where: {
+//         ...baseQuery.where,
+//         parent_id: {
+//           [Op.eq]: null,
+//         },
+//       },
+//       distinct: true,
+//       limit,
+//       offset,
+//       order: [[orderBy, sortedBy]],
+//     });
+//   } else {
+//     categories = await Category.findAndCountAll(baseQuery);
+//   }
+
+//   // const cateWithTranslatedLanguages = categories.map((cate) => ({
+//   //   ...cate.toJSON(),
+//   //   translated_languages: ['vi'],
+//   // }));
+//   // TODO fix this
+//   return res.json(
+//     UtilService.paginate(categories.count, limit, offset, categories.rows),
+//   );
+// };
 export const index = async (req, res) => {
   const language = req.query.language
     ? req.query.language
     : constants.DEFAULT_LANGUAGE;
-  const parent = req.query.parent;
   const limit = req.query.limit ? parseInt(req.query.limit) : 15;
-
+  const offset = req.query.page ? (parseInt(req.query.page) - 1) * limit : 0;
+  const orderBy = req.query.orderBy || "created_at";
+  const sortedBy = req.query.sortedBy || "desc";
+  const search = UtilService.convertToObject(req.query.search);
+  const parent = req.query.parent;
   let categories;
+  let typeInclude = {};
+  if (search.type) {
+    typeInclude = {
+      model: Type,
+      as: "type",
+      where: { slug: search.type?.slug },
+    };
+  } else {
+    typeInclude = {
+      model: Type,
+      as: "type",
+    };
+  }
 
   const baseQuery = {
     where: {
       language,
     },
     include: [
-      { model: Type, as: "type" },
+      typeInclude,
       {
         association: "parent",
         as: "parent",
@@ -39,12 +128,19 @@ export const index = async (req, res) => {
         ],
       },
     ],
-    limit: limit,
+    distinct: true,
+    limit,
+    offset,
+    order: [[orderBy, sortedBy]],
   };
-
+  if (search.name && !search.type) {
+    baseQuery.where.name = {
+      [Op.like]: `%${search.name}%`,
+    };
+  }
   if (parent === "null") {
     console.log("parent is null");
-    categories = await Category.findAll({
+    categories = await Category.findAndCountAll({
       ...baseQuery,
       where: {
         ...baseQuery.where,
@@ -52,9 +148,13 @@ export const index = async (req, res) => {
           [Op.eq]: null,
         },
       },
+      distinct: true,
+      limit,
+      offset,
+      order: [[orderBy, sortedBy]],
     });
   } else {
-    categories = await Category.findAll(baseQuery);
+    categories = await Category.findAndCountAll(baseQuery);
   }
 
   // const cateWithTranslatedLanguages = categories.map((cate) => ({
@@ -62,9 +162,10 @@ export const index = async (req, res) => {
   //   translated_languages: ['vi'],
   // }));
   // TODO fix this
-  return res.json({ data: categories });
+  return res.json(
+    UtilService.paginate(categories.count, limit, offset, categories.rows),
+  );
 };
-
 export const show = async (req, res) => {
   const { slug } = req.params;
   const language = req.query.language || constants.DEFAULT_LANGUAGE;
