@@ -67,7 +67,7 @@ export default function (sequelize, DataTypes) {
         comment: "null",
       },
       photos: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
         comment: "null",
       },
@@ -92,8 +92,16 @@ export default function (sequelize, DataTypes) {
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
-    }
+    },
   );
-
+  Review.associate = (models) => {
+    Review.belongsTo(models.User, {
+      foreignKey: "user_id",
+      as: "customer",
+    });
+    Review.belongsTo(models.Shop, { foreignKey: "shop_id" });
+    Review.belongsTo(models.Order, { foreignKey: "order_id" });
+    Review.belongsTo(models.Product, { foreignKey: "product_id" });
+  };
   return Review;
 }
