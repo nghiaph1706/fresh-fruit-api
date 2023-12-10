@@ -97,7 +97,7 @@ export default function (sequelize, DataTypes) {
   Review.associate = (models) => {
     Review.belongsTo(models.User, {
       foreignKey: "user_id",
-      as: "customer",
+      as: "user",
     });
     Review.belongsTo(models.Shop, { foreignKey: "shop_id" });
     Review.belongsTo(models.Order, { foreignKey: "order_id" });

@@ -3,7 +3,7 @@ import { models } from "../models/index.js";
 import * as ReviewRepository from "../repositories/ReviewRepository.js";
 import * as UtilService from "../services/UtilServcie.js";
 import { Op } from "sequelize";
-const { Review, Order, Product, Shop } = models;
+const { Review, Order, Product, Shop, User } = models;
 
 export const index = async (req, res) => {
   const language = req.query.language
@@ -22,7 +22,11 @@ export const index = async (req, res) => {
   const reviews = await Review.findAndCountAll({
     where,
     distinct: true,
-    include: [{ model: Product }, { model: Order }],
+    include: [
+      { model: Product },
+      { model: Order },
+      { model: User, as: "user" },
+    ],
     limit,
     offset,
     order: [[orderBy, sortedBy]],
