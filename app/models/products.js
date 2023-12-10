@@ -210,7 +210,7 @@ export default function (sequelize, DataTypes) {
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
-    }
+    },
   );
 
   Product.associate = (models) => {

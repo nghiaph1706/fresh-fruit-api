@@ -2,7 +2,8 @@ import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import * as ReviewRepository from "../repositories/ReviewRepository.js";
 import * as UtilService from "../services/UtilServcie.js";
-const { Review, Order, Product } = models;
+import { Op } from "sequelize";
+const { Review, Order, Product, Shop } = models;
 
 export const index = async (req, res) => {
   const language = req.query.language
@@ -13,12 +14,15 @@ export const index = async (req, res) => {
   const orderBy = req.query.orderBy || "created_at";
   const sortedBy = req.query.sortedBy || "desc";
   const search = UtilService.convertToObject(req.query.search);
-  const include = [];
+  const include = [{ model: Product }, { model: Order }];
+  let where = {};
+  if (search.shop_id) {
+    where.shop_id = search.shop_id;
+  }
   const reviews = await Review.findAndCountAll({
-    where: {},
+    where,
     distinct: true,
-    limit: limit,
-    include,
+    include: [{ model: Product }, { model: Order }],
     limit,
     offset,
     order: [[orderBy, sortedBy]],
@@ -43,26 +47,25 @@ export const show = async (req, res) => {
 
 export const store = async (req, res) => {
   const { product_id, order_id, shop_id } = req.body;
-
-  const hasProductInOrder = await Order.findOne({
-    where: {
-      id: order_id,
-    },
-    include: [
-      {
-        model: Product,
-        where: {
-          id: product_id,
-        },
-      },
-    ],
-  });
-
-  if (!hasProductInOrder) {
-    return res.status(404).json({ message: constants.NOT_FOUND });
-  }
-
   try {
+    const hasProductInOrder = await Order.findOne({
+      where: {
+        id: order_id,
+      },
+      include: [
+        {
+          model: Product,
+          where: {
+            id: product_id,
+          },
+        },
+      ],
+    });
+
+    if (!hasProductInOrder) {
+      return res.status(404).json({ message: constants.NOT_FOUND });
+    }
+
     const user_id = req.user.id;
     let query = {
       where: {
@@ -92,6 +95,7 @@ export const store = async (req, res) => {
 
     return res.json({ data: newReview });
   } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .json({ message: constants.ALREADY_GIVEN_REVIEW_FOR_THIS_PRODUCT });
