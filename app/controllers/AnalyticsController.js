@@ -3,6 +3,7 @@ import constants from "../config/constants.js";
 import { models } from "../models/index.js";
 import OrderStatus from "../config/enum/OrderStatus.js";
 import * as AnalyticsRepository from "../repositories/AnalyticsRepository.js";
+import { sequelize } from "../models/index.js";
 
 const { Order, Shop, User, Refund } = models;
 
@@ -132,6 +133,58 @@ export const analytics = async (req, res) => {
         yearlyTotalOrderByStatus,
       });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const categoryWiseProduct = async (req, res) => {
+  try {
+    const user = req.user;
+    const limit = req.query.limit ? req.query.limit : 15;
+    const language = req.query.language
+      ? req.query.language
+      : constants.DEFAULT_LANGUAGE;
+
+    let mostProductCategory = [];
+
+    if (req.isSuperAdmin) {
+      mostProductCategory = await sequelize.query(
+        `SELECT categories.id as category_id, categories.name as category_name, shops.name as shop_name, COUNT(category_product.product_id) as product_count FROM category_product INNER JOIN products ON category_product.product_id = products.id INNER JOIN categories ON category_product.category_id = categories.id INNER JOIN shops ON products.shop_id = shops.id WHERE categories.language = '${language}' GROUP BY categories.id, categories.name, shops.name ORDER BY product_count DESC LIMIT ${limit}`,
+        {
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
+    }
+
+    if (req.isStoreOwner) {
+      const shops = await user
+        .getShops()
+        .then((shops) => shops.map((shop) => shop.id));
+      mostProductCategory = await sequelize.query(
+        `SELECT categories.id as category_id, categories.name as category_name, shops.name as shop_name, COUNT(category_product.product_id) as product_count FROM category_product INNER JOIN products ON category_product.product_id = products.id INNER JOIN categories ON category_product.category_id = categories.id INNER JOIN shops ON products.shop_id = shops.id WHERE categories.language = '${language}' AND shops.id IN (${shops}) GROUP BY categories.id, categories.name, shops.name ORDER BY product_count DESC LIMIT ${limit}`,
+        {
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
+    }
+
+    if (req.isStaff) {
+      const shop = user.shop_id;
+      if (shop) {
+        mostProductCategory = await sequelize.query(
+          `SELECT categories.id as category_id, categories.name as category_name, shops.name as shop_name, COUNT(category_product.product_id) as product_count FROM category_product INNER JOIN products ON category_product.product_id = products.id INNER JOIN categories ON category_product.category_id = categories.id INNER JOIN shops ON products.shop_id = shops.id WHERE categories.language = '${language}' AND shops.id = '${shop}' GROUP BY categories.id, categories.name, shops.name ORDER BY product_count DESC LIMIT ${limit}`,
+          {
+            type: Sequelize.QueryTypes.SELECT,
+          }
+        );
+      } else {
+        mostProductCategory = [];
+      }
+    }
+
+    return res.json(mostProductCategory);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
