@@ -38,5 +38,16 @@ export default function (sequelize, DataTypes) {
     }
   );
 
+  // CategoryProduct.associate = function (models) {
+  //   CategoryProduct.belongsTo(models.Product, {
+  //     foreignKey: "product_id",
+  //     as: "product",
+  //   });
+  //   CategoryProduct.belongsTo(models.Category, {
+  //     foreignKey: "category_id",
+  //     as: "category",
+  //   });
+  // };
+
   return CategoryProduct;
 }

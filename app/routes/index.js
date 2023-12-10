@@ -548,6 +548,6 @@ router.get(
 router.get(
   "/category-wise-product",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  StoreNoticeController.index,
+  AnalyticsController.categoryWiseProduct,
 );
 export default router;
