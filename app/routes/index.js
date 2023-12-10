@@ -44,7 +44,7 @@ router.post("/logout", UserController.logout);
 router.post("/forget-password", UserController.forgetPassword);
 router.post(
   "/verify-forget-password-token",
-  UserController.verifyForgetPasswordToken
+  UserController.verifyForgetPasswordToken,
 );
 router.post("/social-login-token", UserController.socialLogin);
 router.post("/reset-password", UserController.resetPassword);
@@ -81,11 +81,12 @@ router.get("/reviews/:slug", ReviewController.show);
 router.get("/questions", QuestionController.index);
 router.get("/questions/:slug", QuestionController.show);
 router.get("/feedbacks", FeedbackController.index);
+router.get("/best-selling-products", ProductController.popularProducts);
 router.get("/feedbacks/:slug", authMiddleware([]), FeedbackController.show);
 router.post(
   "/orders/checkout/verify",
   authMiddleware([]),
-  CheckoutController.verify
+  CheckoutController.verify,
 );
 router.get("/orders", authMiddleware([]), OrderController.index);
 router.get("/orders/:slug", authMiddleware([]), OrderController.show);
@@ -96,7 +97,7 @@ router.get("/refund-reasons", authMiddleware([]), RefundReasonController.index);
 router.get(
   "/refund-reasons/:slug",
   authMiddleware([]),
-  RefundReasonController.show
+  RefundReasonController.show,
 );
 router.get("/refunds", authMiddleware([]), RefundsController.index);
 router.get("/refunds/:slug", authMiddleware([]), RefundsController.show);
@@ -110,129 +111,129 @@ router.get("/faqs/:id", authMiddleware([]), FaqController.show);
 router.post(
   "/wishlists/toggle",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  WishlistController.toggle
+  WishlistController.toggle,
 );
 router.get(
   "/wishlists",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  WishlistController.index
+  WishlistController.index,
 );
 router.post(
   "/wishlists/store",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  WishlistController.store
+  WishlistController.store,
 );
 router.delete(
   "/wishlists/:id",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  WishlistController.destroy
+  WishlistController.destroy,
 );
 router.get(
   "/wishlists/in_wishlist/:product_id",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  WishlistController.in_wishlist
+  WishlistController.in_wishlist,
 );
 router.get(
   "/my-wishlists",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  ProductController.myWishlists
+  ProductController.myWishlists,
 );
 router.get("/me", authMiddleware([PermissionEnum.CUSTOMER]), UserController.me);
 router.put(
   "/users/:id",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  UserController.update
+  UserController.update,
 );
 
 router.post(
   "/reviews",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  ReviewController.store
+  ReviewController.store,
 );
 router.put(
   "/reviews/:id",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  ReviewController.update
+  ReviewController.update,
 );
 router.get(
   "/followed-shops-popular-products",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  ShopController.followedShopsPopularProducts
+  ShopController.followedShopsPopularProducts,
 );
 router.get(
   "/followed-shops",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  ShopController.userFollowedShops
+  ShopController.userFollowedShops,
 );
 router.get(
   "/follow-shop",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  ShopController.userFollowedShop
+  ShopController.userFollowedShop,
 );
 router.post(
   "/follow-shop",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  ShopController.handleFollowShop
+  ShopController.handleFollowShop,
 );
 router.get(
   "/my-questions",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  QuestionController.myQuestions
+  QuestionController.myQuestions,
 );
 router.post(
   "/questions",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  QuestionController.store
+  QuestionController.store,
 );
 router.post(
   "/feedbacks",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  FeedbackController.store
+  FeedbackController.store,
 );
 router.post(
   "/abusive_reports",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  AbusiveReportController.store
+  AbusiveReportController.store,
 );
 router.get(
   "/my-reports",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  AbusiveReportController.myReports
+  AbusiveReportController.myReports,
 );
 router.post(
   "/change-password",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  UserController.changePassword
+  UserController.changePassword,
 );
 router.post(
   "/update-contact",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  UserController.updateContact
+  UserController.updateContact,
 );
 router.delete(
   "/address/:id",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  AddressController.destroy
+  AddressController.destroy,
 );
 router.post(
   "/refunds",
   authMiddleware([PermissionEnum.CUSTOMER]),
-  RefundsController.store
+  RefundsController.store,
 );
 router.post(
   "/attachments",
   authMiddleware([PermissionEnum.CUSTOMER]) && upload.array("attachment[]", 5),
-  AttachmentController.store
+  AttachmentController.store,
 );
 router.delete(
   "/attachments/:slug",
   authMiddleware([]),
-  AttachmentController.destroy
+  AttachmentController.destroy,
 );
 router.get(
   "/orders/tracking-number/:tracking_number",
   authMiddleware([]),
-  OrderController.findByTrackingNumber
+  OrderController.findByTrackingNumber,
 );
 
 /**
@@ -243,223 +244,223 @@ router.get(
 router.post(
   "/categories",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  CategoryController.store
+  CategoryController.store,
 );
 router.put(
   "/categories/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  CategoryController.update
+  CategoryController.update,
 );
 router.delete(
   "/categories/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  CategoryController.destroy
+  CategoryController.destroy,
 );
 router.post(
   "/types",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TypeController.store
+  TypeController.store,
 );
 router.put(
   "/types/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TypeController.update
+  TypeController.update,
 );
 router.delete(
   "/types/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TypeController.destroy
+  TypeController.destroy,
 );
 router.post(
   "/delivery-times",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  DeliveryTimeController.store
+  DeliveryTimeController.store,
 );
 router.put(
   "/delivery-times/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  DeliveryTimeController.update
+  DeliveryTimeController.update,
 );
 router.delete(
   "/delivery-times/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  DeliveryTimeController.destroy
+  DeliveryTimeController.destroy,
 );
 router.post(
   "/coupons",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  CouponController.store
+  CouponController.store,
 );
 router.put(
   "/coupons/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  CouponController.update
+  CouponController.update,
 );
 router.delete(
   "/coupons/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  CouponController.destroy
+  CouponController.destroy,
 );
 router.post(
   "/tags",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TagController.store
+  TagController.store,
 );
 router.put(
   "/tags/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TagController.update
+  TagController.update,
 );
 router.delete(
   "/tags/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TagController.destroy
+  TagController.destroy,
 );
 router.delete(
   "/reviews/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  ReviewController.destroy
+  ReviewController.destroy,
 );
 router.delete(
   "/questions/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  QuestionController.destroy
+  QuestionController.destroy,
 );
 router.post(
   "/approve-withdraw",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  WithdrawController.approveWithdraw
+  WithdrawController.approveWithdraw,
 );
 router.delete(
   "/withdraws/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  WithdrawController.destroy
+  WithdrawController.destroy,
 );
 router.get(
   "/withdraws/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  WithdrawController.show
+  WithdrawController.show,
 );
 
 router.post(
   "/refund-reasons",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  RefundReasonController.store
+  RefundReasonController.store,
 );
 router.put(
   "/refund-reasons/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  RefundReasonController.update
+  RefundReasonController.update,
 );
 router.delete(
   "/refund-reasons/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  RefundReasonController.destroy
+  RefundReasonController.destroy,
 );
 router.post(
   "/faqs",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  FaqController.store
+  FaqController.store,
 );
 router.put(
   "/faqs/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  FaqController.update
+  FaqController.update,
 );
 router.delete(
   "/faqs/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  FaqController.destroy
+  FaqController.destroy,
 );
 router.get(
   "/users",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  UserController.index
+  UserController.index,
 );
 router.post(
   "/users",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  UserController.store
+  UserController.store,
 );
 router.post(
   "/users/block-user",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  UserController.banUser
+  UserController.banUser,
 );
 router.post(
   "/users/unblock-user",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  UserController.activeUser
+  UserController.activeUser,
 );
 router.post(
   "/taxes",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TaxController.store
+  TaxController.store,
 );
 router.put(
   "/taxes/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TaxController.update
+  TaxController.update,
 );
 router.delete(
   "/taxes/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TaxController.destroy
+  TaxController.destroy,
 );
 router.get(
   "/taxes",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TaxController.index
+  TaxController.index,
 );
 router.get(
   "/taxes/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  TaxController.show
+  TaxController.show,
 );
 router.post(
   "/attributes",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  AttributeController.store
+  AttributeController.store,
 );
 router.put(
   "/attributes/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  AttributeController.update
+  AttributeController.update,
 );
 router.delete(
   "/attributes/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  AttributeController.destroy
+  AttributeController.destroy,
 );
 router.put(
   "/shippings/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  ShippingController.update
+  ShippingController.update,
 );
 router.post(
   "/settings",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  SettingsController.store
+  SettingsController.store,
 );
 router.delete(
   "/shippings/:id",
   authMiddleware([PermissionEnum.STAFF]),
-  ShippingController.destroy
+  ShippingController.destroy,
 );
 router.get(
   "/shippings",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  ShippingController.index
+  ShippingController.index,
 );
 router.get(
   "/shippings/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  ShippingController.show
+  ShippingController.show,
 );
 router.post(
   "/shippings",
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
-  ShippingController.store
+  ShippingController.store,
 );
 /**
  * ******************************************
@@ -469,47 +470,47 @@ router.post(
 router.get(
   "/analytics",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  AnalyticsController.analytics
+  AnalyticsController.analytics,
 );
 router.post(
   "/products",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  ProductController.store
+  ProductController.store,
 );
 router.put(
   "/products/:id",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  ProductController.update
+  ProductController.update,
 );
 router.delete(
   "/products/:id",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  ProductController.destroy
+  ProductController.destroy,
 );
 router.put(
   "/orders/:id",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  OrderController.update
+  OrderController.update,
 );
 router.delete(
   "/orders/:id",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  OrderController.destroy
+  OrderController.destroy,
 );
 router.get(
   "/withdraws",
   authMiddleware([PermissionEnum.SUPER_ADMIN, PermissionEnum.STORE_OWNER]),
-  WithdrawController.index
+  WithdrawController.index,
 );
 router.post(
   "/withdraws",
   authMiddleware([PermissionEnum.SUPER_ADMIN, PermissionEnum.STORE_OWNER]),
-  WithdrawController.store
+  WithdrawController.store,
 );
 router.put(
   "/withdraws/:id",
   authMiddleware([PermissionEnum.SUPER_ADMIN, PermissionEnum.STORE_OWNER]),
-  WithdrawController.update
+  WithdrawController.update,
 );
 
 /**
@@ -520,28 +521,28 @@ router.put(
 router.post(
   "/shops",
   authMiddleware([PermissionEnum.STORE_OWNER]),
-  ShopController.store
+  ShopController.store,
 );
 
 // ADD more
 router.get(
   "/withdraws",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  StoreNoticeController.index
+  StoreNoticeController.index,
 );
 router.get(
   "/top-rate-product",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  ProductController.popularProducts
+  ProductController.popularProducts,
 );
 router.get(
   "/low-stock-products",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  ProductController.popularProducts
+  ProductController.popularProducts,
 );
 router.get(
   "/category-wise-product",
   authMiddleware([PermissionEnum.STAFF, PermissionEnum.STORE_OWNER]),
-  StoreNoticeController.index
+  StoreNoticeController.index,
 );
 export default router;
