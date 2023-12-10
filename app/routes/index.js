@@ -512,6 +512,11 @@ router.put(
   authMiddleware([PermissionEnum.SUPER_ADMIN, PermissionEnum.STORE_OWNER]),
   WithdrawController.update,
 );
+router.put(
+  "/refunds/:id",
+  authMiddleware([PermissionEnum.SUPER_ADMIN, PermissionEnum.STORE_OWNER]),
+  RefundsController.update,
+);
 
 /**
  * *****************************************

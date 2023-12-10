@@ -129,8 +129,8 @@ export const index = async (req, res) => {
         ],
         distinct: true,
         where: {
-          customer_id: { [Op.eq]: req.user.id },
-          shop_id: { [Op.eq]: null },
+          customer_id: req.user.id,
+          shop_id: { [Op.ne]: null },
         },
         limit,
         offset,
@@ -245,14 +245,15 @@ export const update = async (req, res) => {
         where: { id: refund.order_id },
         include: [{ model: Order, as: "children" }],
       });
-      order.children.forEach(async (item) => {
-        const balance = await Balance.finOne({
-          where: { shop_id: item.shop_id },
-        });
-        balance.total_earnings = balance.total_earnings - item.amount;
-        balance.current_balance = balance.current_balance - item.amount;
-        balance.save({ transaction: t });
+      // order.children.forEach(async (item) => {
+      const balance = await Balance.findOne({
+        where: { shop_id: order.shop_id },
       });
+      balance.total_earnings = balance.total_earnings - order.amount;
+      balance.current_balance = balance.current_balance - order.amount;
+      console.log(balance);
+      await balance.save({ transaction: t });
+      // });
       // let wallet = await Wallet.findOne({
       //   where: { customer_id: refund.customer_id },
       // });
@@ -298,10 +299,15 @@ const changeShopSpecificRefundStatus = async (order_id, status, t) => {
 const changeOrderStatus = async (parentOrderId, data, t) => {
   const parentOrder = await Order.findOne({ where: { id: parentOrderId } });
   if (parentOrder) {
-    Object.assign(parentOrder, { status: data });
-    parentOrder.save();
-    Order.update(
-      { order_status: data.order_status, payment_status: data.payment_status },
+    parentOrder.order_status = data.order_status;
+    // parentOrder.payment_status = data.payment_status;
+    console.log(parentOrder);
+    await parentOrder.save({ transaction: t });
+    await Order.update(
+      {
+        order_status: data.order_status,
+        // payment_status: data.payment_status
+      },
       { where: { parent_id: parentOrder.id } },
       { transaction: t },
     );
