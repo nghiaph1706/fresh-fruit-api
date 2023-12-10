@@ -150,13 +150,6 @@ export const categoryWiseProduct = async (req, res) => {
     let mostProductCategory = [];
 
     if (req.isSuperAdmin) {
-      // mostProductCategory = await sequelize.query(
-      //   `SELECT categories.id as category_id, categories.name as category_name, shops.name as shop_name, COUNT(category_product.product_id) as product_count FROM category_product INNER JOIN products ON category_product.product_id = products.id INNER JOIN categories ON category_product.category_id = categories.id INNER JOIN shops ON products.shop_id = shops.id WHERE categories.language = '${language}' GROUP BY categories.id, categories.name, shops.name ORDER BY product_count DESC LIMIT ${limit}`,
-      //   {
-      //     type: Sequelize.QueryTypes.SELECT,
-      //   }
-      // );
-
       mostProductCategory = await sequelize.query(
         `
           SELECT
@@ -175,8 +168,8 @@ export const categoryWiseProduct = async (req, res) => {
         `,
         {
           replacements: {
-            language, // Replace with the actual language variable
-            limit, // Replace with the actual limit variable
+            language,
+            limit,
           },
           type: Sequelize.QueryTypes.SELECT,
         }
@@ -185,92 +178,61 @@ export const categoryWiseProduct = async (req, res) => {
       const shops = await user
         .getShops()
         .then((shops) => shops.map((shop) => shop.id));
-      // mostProductCategory = await sequelize.query(
-      //   `SELECT categories.id as category_id, categories.name as category_name, shops.name as shop_name, COUNT(category_product.product_id) as product_count FROM category_product INNER JOIN products ON category_product.product_id = products.id INNER JOIN categories ON category_product.category_id = categories.id INNER JOIN shops ON products.shop_id = shops.id WHERE categories.language = '${language}' AND shops.id IN (${shops}) GROUP BY categories.id, categories.name, shops.name ORDER BY product_count DESC LIMIT ${limit}`,
-      //   {
-      //     type: Sequelize.QueryTypes.SELECT,
-      //   }
-      // );
-
-      mostProductCategory = await CategoryProduct.findAll({
-        attributes: [
-          [
-            Sequelize.fn("COUNT", Sequelize.col("category_product.product_id")),
-            "product_count",
-          ],
-        ],
-        include: [
-          {
-            model: models.Product,
-            attributes: [],
-            include: [
-              {
-                model: models.Shop,
-                attributes: [],
-                where: {
-                  id: { [Op.in]: shops },
-                },
-              },
-            ],
+      mostProductCategory = await sequelize.query(
+        `
+          SELECT
+              categories.id AS category_id,
+              categories.name AS category_name,
+              shops.name AS shop_name,
+              COUNT(category_product.product_id) AS product_count
+          FROM category_product
+          INNER JOIN products ON category_product.product_id = products.id
+          INNER JOIN categories ON category_product.category_id = categories.id
+          INNER JOIN shops ON products.shop_id = shops.id
+          WHERE categories.language = :language
+          AND shops.id IN (:shops)
+          GROUP BY categories.id, categories.name, shops.name
+          ORDER BY product_count DESC
+          LIMIT :limit
+        `,
+        {
+          replacements: {
+            language, // Replace with the actual language variable
+            shops, // Replace with the actual shops variable
+            limit, // Replace with the actual limit variable
           },
-          {
-            model: models.Category,
-            attributes: ["id", "name"],
-            where: {
-              language,
-            },
-          },
-        ],
-        group: ["category_product.category_id", "category.id", "shop.id"],
-        order: [[Sequelize.literal("product_count"), "DESC"]],
-        limit,
-      });
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
     } else if (req.isStaff) {
       const shop = user.shop_id;
       if (shop) {
-        // mostProductCategory = await sequelize.query(
-        //   `SELECT categories.id as category_id, categories.name as category_name, shops.name as shop_name, COUNT(category_product.product_id) as product_count FROM category_product INNER JOIN products ON category_product.product_id = products.id INNER JOIN categories ON category_product.category_id = categories.id INNER JOIN shops ON products.shop_id = shops.id WHERE categories.language = '${language}' AND shops.id = '${shop}' GROUP BY categories.id, categories.name, shops.name ORDER BY product_count DESC LIMIT ${limit}`,
-        //   {
-        //     type: Sequelize.QueryTypes.SELECT,
-        //   }
-        // );
-
-        mostProductCategory = await CategoryProduct.findAll({
-          attributes: [
-            [
-              Sequelize.fn(
-                "COUNT",
-                Sequelize.col("category_product.product_id")
-              ),
-              "product_count",
-            ],
-          ],
-          include: [
-            {
-              model: models.Product,
-              attributes: [],
-              include: [
-                {
-                  model: models.Shop,
-                  attributes: [],
-                  where: {
-                    id: shop,
-                  },
-                },
-              ],
+        mostProductCategory = await sequelize.query(
+          `
+            SELECT
+                categories.id AS category_id,
+                categories.name AS category_name,
+                shops.name AS shop_name,
+                COUNT(category_product.product_id) AS product_count
+            FROM category_product
+            INNER JOIN products ON category_product.product_id = products.id
+            INNER JOIN categories ON category_product.category_id = categories.id
+            INNER JOIN shops ON products.shop_id = shops.id
+            WHERE categories.language = :language
+            AND shops.id = :shop
+            GROUP BY categories.id, categories.name, shops.name
+            ORDER BY product_count DESC
+            LIMIT :limit
+          `,
+          {
+            replacements: {
+              language, // Replace with the actual language variable
+              shop, // Replace with the actual shop variable
+              limit, // Replace with the actual limit variable
             },
-            {
-              model: models.Category,
-              attributes: ["id", "name"],
-              where: {
-                language,
-              },
-            },
-          ],
-          group: ["category_product.category_id", "category.id", "shop.id"],
-          order: [[Sequelize.literal("product_count"), "DESC"]],
-          limit,
-        });
+            type: Sequelize.QueryTypes.SELECT,
+          }
+        );
       } else {
         mostProductCategory = [];
       }
