@@ -21,7 +21,7 @@ app.use(urlencoded({ extended: true }))
 connection()
 
 // Use the routes defined in the router
-app.use('/backend', routes)
+app.use('', routes)
 
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
