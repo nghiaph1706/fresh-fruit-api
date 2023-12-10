@@ -142,7 +142,7 @@ export const analytics = async (req, res) => {
 export const categoryWiseProduct = async (req, res) => {
   try {
     const user = req.user;
-    const limit = req.query.limit ? req.query.limit : 15;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 15;
     const language = req.query.language
       ? req.query.language
       : constants.DEFAULT_LANGUAGE;
