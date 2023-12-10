@@ -157,39 +157,31 @@ export const categoryWiseProduct = async (req, res) => {
       //   }
       // );
 
-      mostProductCategory = await CategoryProduct.findAll({
-        attributes: [
-          [
-            Sequelize.fn("COUNT", Sequelize.col("category_product.product_id")),
-            "product_count",
-          ],
-        ],
-        include: [
-          {
-            model: models.Product,
-            attributes: [],
-            include: [
-              {
-                model: models.Shop,
-                attributes: [],
-              },
-            ],
+      mostProductCategory = await sequelize.query(
+        `
+          SELECT
+              categories.id AS category_id,
+              categories.name AS category_name,
+              shops.name AS shop_name,
+              COUNT(category_product.product_id) AS product_count
+          FROM category_product
+          INNER JOIN products ON category_product.product_id = products.id
+          INNER JOIN categories ON category_product.category_id = categories.id
+          INNER JOIN shops ON products.shop_id = shops.id
+          WHERE categories.language = :language
+          GROUP BY categories.id, categories.name, shops.name
+          ORDER BY product_count DESC
+          LIMIT :limit
+        `,
+        {
+          replacements: {
+            language, // Replace with the actual language variable
+            limit, // Replace with the actual limit variable
           },
-          {
-            model: models.Category,
-            attributes: ["id", "name"],
-            where: {
-              language,
-            },
-          },
-        ],
-        group: ["category_product.category_id", "category.id", "shop.id"],
-        order: [[Sequelize.literal("product_count"), "DESC"]],
-        limit,
-      });
-    }
-
-    if (req.isStoreOwner) {
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
+    } else if (req.isStoreOwner) {
       const shops = await user
         .getShops()
         .then((shops) => shops.map((shop) => shop.id));
@@ -233,9 +225,7 @@ export const categoryWiseProduct = async (req, res) => {
         order: [[Sequelize.literal("product_count"), "DESC"]],
         limit,
       });
-    }
-
-    if (req.isStaff) {
+    } else if (req.isStaff) {
       const shop = user.shop_id;
       if (shop) {
         // mostProductCategory = await sequelize.query(
