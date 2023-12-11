@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 export default function (sequelize, DataTypes) {
-  return sequelize.define('tax_classes', {
+  const Tax = sequelize.define('tax_classes', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -66,6 +66,11 @@ export default function (sequelize, DataTypes) {
       comment: 'null'
     }
   }, {
-    tableName: 'tax_classes'
+    tableName: 'tax_classes',
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
   })
+
+  return Tax
 };

@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 export default function (sequelize, DataTypes) {
-  return sequelize.define('shipping_classes', {
+  const Shipping = sequelize.define('shipping_classes', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -42,6 +42,18 @@ export default function (sequelize, DataTypes) {
       comment: 'null'
     }
   }, {
-    tableName: 'shipping_classes'
+    tableName: 'shipping_classes',
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
   })
+
+  Shipping.associate = (models) => {
+    Shipping.hasMany(models.Product, {
+      foreignKey: "shipping_class_id",
+      as: "products",
+    });
+  };
+
+  return Shipping
 };

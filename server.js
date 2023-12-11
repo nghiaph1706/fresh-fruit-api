@@ -1,7 +1,9 @@
 import express, { json, urlencoded } from 'express'
+
 import dotenv from 'dotenv'
 import cors from 'cors'
-import './app/config/db.connection.js'
+import { connection } from './app/config/db.connection.js' // Assuming this is your Sequelize connection file
+import routes from './app/routes/index.js' // Assuming your routes are defined in this folder
 
 dotenv.config()
 
@@ -12,14 +14,14 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
-
 app.use(json())
+app.use(urlencoded({ extended: true }))
 
-app.use(
-  urlencoded({ extended: true })
-)
+// Use the connection function to establish the database connection
+connection()
 
-// require("./app/routes/tutorial.routes.js")(app);
+// Use the routes defined in the router
+app.use('/backend', routes)
 
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
