@@ -463,6 +463,16 @@ router.post(
   authMiddleware([PermissionEnum.SUPER_ADMIN]),
   ShippingController.store
 );
+router.post(
+  "/approve-shop",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  ShopController.approveShop
+);
+router.post(
+  "/disapprove-shop",
+  authMiddleware([PermissionEnum.SUPER_ADMIN]),
+  ShopController.disApproveShop
+);
 /**
  * ******************************************
  * Authorized Route for Staff & Store Owner

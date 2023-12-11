@@ -32,6 +32,9 @@ export default function (sequelize, DataTypes) {
     },
     {
       tableName: "product_tag",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 
